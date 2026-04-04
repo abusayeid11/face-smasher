@@ -365,6 +365,113 @@ p {
     font-size: 0.9rem;
 }
 
+.commentary-stage {
+    position: relative;
+    width: min(100%, 800px);
+    min-height: 74px;
+    margin-top: 10px;
+    overflow: visible;
+}
+
+.commentary-bubble {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 2px solid #252525;
+    background: linear-gradient(130deg, #fffef5 0%, #fff4dd 100%);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+    color: #3b2507;
+    font-weight: 700;
+    opacity: 0.25;
+    transform: translateY(2px) scale(0.98);
+    transition: opacity 0.25s ease;
+}
+
+.commentary-stage.active .commentary-bubble {
+    opacity: 1;
+    animation: bubblePop 0.38s ease;
+}
+
+.commentary-bubble.hit {
+    background: linear-gradient(130deg, #fff2e4 0%, #ffe1c9 100%);
+    border-color: #7f2d0b;
+    color: #5a2000;
+}
+
+.commentary-bubble.miss {
+    background: linear-gradient(130deg, #eef5ff 0%, #e2edff 100%);
+    border-color: #1849a9;
+    color: #0f326f;
+}
+
+.commentary-bubble.combo {
+    background: linear-gradient(130deg, #fff0ec 0%, #ffd6cd 100%);
+    border-color: #b42318;
+    color: #7a271a;
+}
+
+.commentary-message-caret {
+    display: inline-block;
+    width: 1px;
+    margin-left: 1px;
+    background: currentColor;
+    height: 0.95em;
+    vertical-align: text-bottom;
+    animation: caretBlink 0.8s steps(1) infinite;
+}
+
+.commentary-icons {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.commentary-icon {
+    position: absolute;
+    top: 40px;
+    font-size: clamp(17px, 2vw, 25px);
+    opacity: 0;
+    animation: iconBurst var(--dur, 1200ms) ease-out forwards;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+}
+
+@keyframes bubblePop {
+    0% {
+        transform: translateY(8px) scale(0.94);
+    }
+    50% {
+        transform: translateY(-2px) scale(1.02);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes iconBurst {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 6px, 0) rotate(0deg) scale(0.8);
+    }
+    12% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(var(--driftX, 0px), var(--riseY, -70px), 0) rotate(var(--spin, 0deg)) scale(var(--endScale, 1.2));
+    }
+}
+
+@keyframes caretBlink {
+    0%, 45% {
+        opacity: 1;
+    }
+    46%, 100% {
+        opacity: 0;
+    }
+}
+
 /* Mobile responsive */
 @media (max-width: 600px) {
     h1 {
