@@ -11,13 +11,25 @@ function getAudioContext() {
 function ensureAudioReady() {
     const ctx = getAudioContext();
 
-    return ctx.resume()
-        .catch(() => {})
-        .then(() => ctx);
+    if (ctx.state === 'suspended') {
+        // Intentionally fire-and-forget to keep this call synchronous in gesture handlers.
+        ctx.resume().catch(() => {});
+    }
+
+    return ctx;
 }
 
 function unlockAudio() {
-    ensureAudioReady();
+    const ctx = ensureAudioReady();
+
+    // Prime the context with a near-silent click so future playback is unlocked on mobile.
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.01);
 }
 
 function playBeep(ctx) {
@@ -35,9 +47,8 @@ function playBeep(ctx) {
 }
 
 function playHitSound() {
-    ensureAudioReady().then((ctx) => {
-        playBeep(ctx);
-    });
+    const ctx = ensureAudioReady();
+    playBeep(ctx);
 }
 
 export { getAudioContext, unlockAudio, playHitSound };

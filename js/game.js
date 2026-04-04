@@ -9,7 +9,9 @@ function initGame(canvas, ctx, scoreLabel, options) {
     const { 
         face, 
         tool, 
-        playHitSound, 
+        playToolSound, 
+        getToolName,
+        playHitSound,
         createMark, 
         drawMark, 
         resetFacePos, 
@@ -98,7 +100,12 @@ function initGame(canvas, ctx, scoreLabel, options) {
                 if (hopInterval > 300) hopInterval -= 100;
                 
                 screenShake = 15;
-                playHitSound();
+                if (typeof playToolSound === 'function') {
+                    const toolName = typeof getToolName === 'function' ? getToolName() : 'punch';
+                    playToolSound(toolName);
+                } else if (typeof playHitSound === 'function') {
+                    playHitSound();
+                }
                 
                 const relX = pos.x - face.x;
                 const relY = pos.y - face.y;

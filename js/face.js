@@ -70,15 +70,6 @@ function loadDefaultFace(instructions, resetCallback, startTimerCallback) {
     );
 }
 
-function initFace(imageUpload, fileName, instructions, resetCallback, startTimerCallback) {
-    imageUpload.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            loadFaceFromFile(file, fileName, instructions, resetCallback, startTimerCallback);
-        }
-    });
-}
-
 function resetFacePosition(canvas) {
     if (face.loaded) {
         face.x = Math.random() * (canvas.width - face.size);
@@ -106,7 +97,6 @@ function clearMarks() {
 
 export { 
     face,
-    initFace,
     loadFaceFromFile,
     loadDefaultFace,
     resetFacePosition,
