@@ -28,7 +28,7 @@ const commentaryMessage = document.getElementById("commentaryMessage");
 const commentaryIcons = document.getElementById("commentaryIcons");
 
 let gameStarted = false;
-let comedyModeEnabled = false;
+let comedyModeEnabled = true;
 
 const commentaryAnimator = createCommentaryAnimator({
     stage: commentaryStage,
