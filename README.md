@@ -8,6 +8,7 @@ A customizable face smasher game where users upload their own image and choose a
 - Realistic bruise effects with multiple layers
 - Screen shake on hit
 - Sound effects
+- Comedy Mode with random funny commentary and combo taunts
 - Mobile responsive with touch support
 
 ## How to Play

@@ -4,19 +4,24 @@ let score = 0;
 let hopInterval = 1500;
 let gameTimer = null;
 let screenShake = 0;
+let comboCount = 0;
+let lastHitAt = 0;
 
 function initGame(canvas, ctx, scoreLabel, options) {
     const { 
         face, 
         tool, 
         playToolSound, 
+        playHitSound,
         getToolName,
         createMark, 
         drawMark, 
         resetFacePos, 
         startTimer,
         getMousePos,
-        triggerSmashAnim
+        triggerSmashAnim,
+        onSuccessfulSmash,
+        onMissSmash
     } = options;
     
     function render() {
@@ -89,19 +94,23 @@ function initGame(canvas, ctx, scoreLabel, options) {
     function handleSmash() {
         triggerSmashAnim();
         const pos = getMousePos();
+        const currentToolName = typeof getToolName === 'function' ? getToolName() : 'punch';
         
         if (face.ready && face.loaded) {
             if (pos.x >= face.x && pos.x <= face.x + face.size &&
                 pos.y >= face.y && pos.y <= face.y + face.size) {
                 
+                const now = performance.now();
+                comboCount = (now - lastHitAt) <= 900 ? comboCount + 1 : 1;
+                lastHitAt = now;
+
                 score++;
                 scoreLabel.innerHTML = `Smashed: ${score}`;
                 if (hopInterval > 300) hopInterval -= 100;
                 
                 screenShake = 15;
                 if (typeof playToolSound === 'function') {
-                    const toolName = typeof getToolName === 'function' ? getToolName() : 'punch';
-                    playToolSound(toolName);
+                    playToolSound(currentToolName);
                 } else if (typeof playHitSound === 'function') {
                     playHitSound();
                 }
@@ -109,17 +118,30 @@ function initGame(canvas, ctx, scoreLabel, options) {
                 const relX = pos.x - face.x;
                 const relY = pos.y - face.y;
                 
-                const newMarks = createMark(getToolName(), relX, relY);
+                const newMarks = createMark(currentToolName, relX, relY);
                 face.marks.push(...newMarks);
+
+                if (typeof onSuccessfulSmash === 'function') {
+                    onSuccessfulSmash({
+                        score,
+                        toolName: currentToolName,
+                        combo: comboCount
+                    });
+                }
                 
                 resetFacePos();
                 startTimer();
+            } else if (typeof onMissSmash === 'function') {
+                comboCount = 0;
+                onMissSmash();
             }
         }
     }
     
     function resetScore(label) {
         score = 0;
+        comboCount = 0;
+        lastHitAt = 0;
         label.innerHTML = "Smashed: 0";
         face.marks = [];
     }

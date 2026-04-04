@@ -21,6 +21,11 @@ body {
     display: none;
 }
 
+.setup-overlay:not(.hidden) #toggleComedyBtn {
+    display: none;
+}
+
+
 h1 {
     color: #cc0000;
     text-shadow: 2px 2px #000;
@@ -260,6 +265,75 @@ h1 {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+#toggleComedyBtn {
+    border: none;
+}
+
+.commentary-toggle {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    gap: 10px;
+    padding: 9px 14px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 999px;
+    border: 1px solid #0f3fa7;
+    background: #e9f2ff;
+    color: #0f3fa7;
+    font-weight: 700;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.commentary-toggle:hover {
+    background: #dce9ff;
+}
+
+.commentary-toggle .toggle-track {
+    width: 46px;
+    height: 24px;
+    border-radius: 999px;
+    background: #2f71ff;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.commentary-toggle .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 23px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transition: left 0.2s ease;
+}
+
+.commentary-toggle .toggle-text {
+    line-height: 1;
+    font-size: 0.93rem;
+}
+
+#toggleComedyBtn.off {
+    background: #f2f4f7;
+    color: #475467;
+    border-color: #d0d5dd;
+}
+
+#toggleComedyBtn.off .toggle-track {
+    background: #98a2b3;
+}
+
+#toggleComedyBtn.off .toggle-knob {
+    left: 3px;
+}
+
+#toggleComedyBtn.off:hover {
+    background: #e8eaef;
 }
 
 button {

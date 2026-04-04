@@ -18,8 +18,65 @@ const gameplayArea = document.getElementById("gameplayArea");
 const setupImageUpload = document.getElementById("setupImageUpload");
 const setupFileName = document.getElementById("setupFileName");
 const startGameBtn = document.getElementById("startGameBtn");
+const toggleComedyBtn = document.getElementById("toggleComedyBtn");
+const toggleComedyText = document.getElementById("toggleComedyText");
 
 let gameStarted = false;
+let comedyModeEnabled = false;
+
+const funnyHitLines = [
+    "Face met destiny.",
+    "Direct hit. Ego has left the chat.",
+    "That looked personal.",
+    "Certified bonk moment.",
+    "Audience score: 10/10 chaos."
+];
+
+const funnyMissLines = [
+    "Missed. The face is laughing at you.",
+    "Air attack unlocked.",
+    "Close... like pineapple on pizza close.",
+    "You hit pure confidence.",
+    "Swing and emotional damage."
+];
+
+function randomLine(lines) {
+    return lines[Math.floor(Math.random() * lines.length)];
+}
+
+function getComboText(combo) {
+    if (combo >= 8) return ` ${combo}x combo. Absolute menace.`;
+    if (combo >= 5) return ` ${combo}x combo. Hands are on fire.`;
+    if (combo >= 3) return ` ${combo}x combo. Things are escalating.`;
+    return "";
+}
+
+function normalizeToolLabel(toolName) {
+    return toolName ? `${toolName[0].toUpperCase()}${toolName.slice(1)}` : "Tool";
+}
+
+function setComedyButtonState() {
+    if (toggleComedyText) {
+        toggleComedyText.textContent = comedyModeEnabled
+            ? "Commentary is on"
+            : "Commentary is off";
+    }
+    toggleComedyBtn.classList.toggle("off", !comedyModeEnabled);
+    toggleComedyBtn.setAttribute("aria-checked", comedyModeEnabled ? "true" : "false");
+}
+
+setComedyButtonState();
+
+toggleComedyBtn.addEventListener("click", () => {
+    comedyModeEnabled = !comedyModeEnabled;
+    setComedyButtonState();
+
+    if (gameStarted) {
+        instructions.textContent = comedyModeEnabled
+            ? "Commentary enabled. Funny updates are back."
+            : "Commentary disabled. Clean mode activated.";
+    }
+});
 
 // Initialize scale updates
 function updateAllScales() {
@@ -45,14 +102,28 @@ const game = initGame(canvas, ctx, scoreLabel, {
     face,
     tool,
     playToolSound,
-    getToolName: getCurrentToolName,
     playHitSound,
+    getToolName: getCurrentToolName,
     createMark,
     drawMark,
     resetFacePos: () => resetFacePosition(canvas),
     startTimer: () => startGameTimer(),
     getMousePos: getMousePosition,
-    triggerSmashAnim: () => { tool.smashAnim = 1; }
+    triggerSmashAnim: () => { tool.smashAnim = 1; },
+    onSuccessfulSmash: ({ score, toolName, combo }) => {
+        if (!comedyModeEnabled) {
+            instructions.textContent = `${normalizeToolLabel(toolName)} connected. Total smashed: ${score}.`;
+            return;
+        }
+
+        const comboText = getComboText(combo);
+        instructions.textContent = `${randomLine(funnyHitLines)} ${normalizeToolLabel(toolName)} used.${comboText}`;
+    },
+    onMissSmash: () => {
+        if (comedyModeEnabled) {
+            instructions.textContent = randomLine(funnyMissLines);
+        }
+    }
 });
 
 // Set up click handler
