@@ -1,29 +1,29 @@
-// Audio module - handles sound effects
-let audioCtx = null;
+// Audio module - handles sound effects using local audio files
 
-function getAudioContext() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const sounds = {
+    punch: new Audio('audio/punch.mp3'),
+    slap: new Audio('audio/slap.mp3'),
+    hammer: new Audio('audio/hammer.mp3')
+};
+
+// Preload sounds
+Object.values(sounds).forEach(sound => {
+    sound.load();
+});
+
+function playToolSound(toolName) {
+    const sound = sounds[toolName];
+    if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(err => {
+            console.warn('Audio play failed:', err);
+        });
     }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-    return audioCtx;
 }
 
+// Export both functions for compatibility
 function playHitSound() {
-    const ctx = getAudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'square';
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.setValueAtTime(200, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.5, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.15);
+    playToolSound('punch'); // Default to punch
 }
 
-export { getAudioContext, playHitSound };
+export { playHitSound, playToolSound };

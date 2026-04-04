@@ -9,7 +9,8 @@ function initGame(canvas, ctx, scoreLabel, options) {
     const { 
         face, 
         tool, 
-        playHitSound, 
+        playToolSound, 
+        getToolName,
         createMark, 
         drawMark, 
         resetFacePos, 
@@ -98,7 +99,7 @@ function initGame(canvas, ctx, scoreLabel, options) {
                 if (hopInterval > 300) hopInterval -= 100;
                 
                 screenShake = 15;
-                playHitSound();
+                playToolSound(getToolName());
                 
                 const relX = pos.x - face.x;
                 const relY = pos.y - face.y;

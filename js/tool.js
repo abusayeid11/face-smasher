@@ -1,6 +1,6 @@
 // Tool module - handles tool loading and switching
 
-let currentToolName = 'fist';
+let currentToolName = 'punch';
 
 const tool = {
     size: 70,
@@ -11,31 +11,31 @@ const tool = {
 
 // Tool images storage
 const toolImages = {
-    fist: { image: new Image(), ready: false },
-    hammer: { image: new Image(), ready: false },
-    glove: { image: new Image(), ready: false }
+    punch: { image: new Image(), ready: false },
+    slap: { image: new Image(), ready: false },
+    hammer: { image: new Image(), ready: false }
 };
 
 // Load all tools
 function loadTools() {
-    // Load fist (primary)
-    toolImages.fist.image.onload = () => {
-        toolImages.fist.ready = true;
-        tool.image = toolImages.fist.image;
+    // Load punch
+    toolImages.punch.image.onload = () => {
+        toolImages.punch.ready = true;
+        tool.image = toolImages.punch.image;
     };
-    toolImages.fist.image.src = "tools/fist.webp";
+    toolImages.punch.image.src = "tools/fist.webp";
     
-    // Load hammer (placeholder - use fist for now)
+    // Load slap
+    toolImages.slap.image.onload = () => {
+        toolImages.slap.ready = true;
+    };
+    toolImages.slap.image.src = "tools/slap.webp";
+    
+    // Load hammer
     toolImages.hammer.image.onload = () => {
         toolImages.hammer.ready = true;
     };
-    toolImages.hammer.image.src = "tools/fist.webp";
-    
-    // Load glove (placeholder - use fist for now)
-    toolImages.glove.image.onload = () => {
-        toolImages.glove.ready = true;
-    };
-    toolImages.glove.image.src = "tools/fist.webp";
+    toolImages.hammer.image.src = "tools/hammer.webp";
 }
 
 function initToolSelector() {
@@ -63,4 +63,8 @@ function updateToolScale() {
     tool.size = tool.baseSize * scale;
 }
 
-export { tool, currentToolName, loadTools, initToolSelector, updateToolScale };
+function getCurrentToolName() {
+    return currentToolName;
+}
+
+export { tool, currentToolName, loadTools, initToolSelector, updateToolScale, getCurrentToolName };
