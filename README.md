@@ -14,6 +14,9 @@ A customizable face smasher game where users upload their own image and choose a
 - Tool-wise commentary animations (Punch/Slap/Hammer each feels different)
 - Tool-wise savage commentary lines with combo tiers
 - Fully modular commentary system for easy future extension
+- Comic book pop-up effects with tool + message-specific animations and colors
+- Tool-wise hit/miss comic text packs with combo variants
+- Modular comic effects system for easy extension
 - Mobile responsive with touch support
 
 ## How to Play
@@ -51,8 +54,12 @@ face-smasher/
 │   ├── marks.js        # Bruise generation
 │   ├── input.js        # Mouse/touch input
 │   ├── game.js         # Main game loop
-│   ├── commentary.js   # Animated commentary engine (hit/miss/combo + tool profiles)
-│   └── commentaryText.js # Tool-wise commentary text and combo message builders
+│   ├── commentary/      # Commentary feature
+│   │   ├── commentary.js   # Animated commentary engine (hit/miss/combo + tool profiles)
+│   │   └── commentaryText.js # Tool-wise commentary text and combo message builders
+│   └── comicEffects/    # Comic pop-up effects
+│       ├── comicPopups.js   # Pop-up animation engine
+│       └── comicText.js     # Tool-wise pop text, colors, and animation metadata
 └── tools/              # Tool images
 ```
 
