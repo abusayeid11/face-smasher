@@ -125,7 +125,8 @@ function initGame(canvas, ctx, scoreLabel, options) {
                     onSuccessfulSmash({
                         score,
                         toolName: currentToolName,
-                        combo: comboCount
+                        combo: comboCount,
+                        hitPos: { x: pos.x, y: pos.y }
                     });
                 }
                 
