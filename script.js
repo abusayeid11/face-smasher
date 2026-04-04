@@ -1,8 +1,8 @@
 // Main entry point - Face Smasher
 
 // Import modules
-import { playHitSound } from './js/audio.js';
-import { face, initFace, resetFacePosition, updateFaceScale, clearMarks } from './js/face.js';
+import { unlockAudio, playHitSound } from './js/audio.js';
+import { face, loadFaceFromFile, loadDefaultFace, resetFacePosition, updateFaceScale, clearMarks } from './js/face.js';
 import { tool, loadTools, initToolSelector, updateToolScale } from './js/tool.js';
 import { createMark, drawMark } from './js/marks.js';
 import { setupMouseInput, setupTouchInput, getMousePosition } from './js/input.js';
@@ -12,9 +12,14 @@ import { initGame } from './js/game.js';
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreLabel = document.getElementById("scoreLabel");
-const imageUpload = document.getElementById("imageUpload");
-const fileName = document.getElementById("fileName");
 const instructions = document.getElementById("instructions");
+const setupOverlay = document.getElementById("setupOverlay");
+const gameplayArea = document.getElementById("gameplayArea");
+const setupImageUpload = document.getElementById("setupImageUpload");
+const setupFileName = document.getElementById("setupFileName");
+const startGameBtn = document.getElementById("startGameBtn");
+
+let gameStarted = false;
 
 // Initialize scale updates
 function updateAllScales() {
@@ -25,17 +30,12 @@ function updateAllScales() {
 window.addEventListener('resize', updateAllScales);
 updateAllScales();
 
+document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+document.addEventListener('mousedown', unlockAudio, { once: true });
+
 // Initialize modules
 loadTools();
 initToolSelector();
-
-initFace(
-    imageUpload, 
-    fileName, 
-    instructions,
-    () => resetFacePosition(canvas),
-    () => startGameTimer()
-);
 
 setupMouseInput(canvas);
 const touchStartHandler = setupTouchInput(canvas);
@@ -55,13 +55,57 @@ const game = initGame(canvas, ctx, scoreLabel, {
 
 // Set up click handler
 canvas.addEventListener("mousedown", () => {
-    game.handleSmash();
+    if (gameStarted) {
+        game.handleSmash();
+    }
 });
 
 // Set up touch handler
 canvas.addEventListener("touchstart", (e) => {
     touchStartHandler(e);
-    game.handleSmash();
+    if (gameStarted) {
+        game.handleSmash();
+    }
+});
+
+setupImageUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    setupFileName.textContent = file
+        ? file.name
+        : "No file selected (default face will be used)";
+});
+
+startGameBtn.addEventListener('click', () => {
+    unlockAudio();
+    const selectedFile = setupImageUpload.files[0];
+
+    const onFaceReady = () => {
+        gameStarted = true;
+        setupOverlay.classList.add('hidden');
+        gameplayArea.classList.remove('hidden');
+    };
+
+    if (selectedFile) {
+        loadFaceFromFile(
+            selectedFile,
+            setupFileName,
+            instructions,
+            () => resetFacePosition(canvas),
+            () => {
+                startGameTimer();
+                onFaceReady();
+            }
+        );
+    } else {
+        loadDefaultFace(
+            instructions,
+            () => resetFacePosition(canvas),
+            () => {
+                startGameTimer();
+                onFaceReady();
+            }
+        );
+    }
 });
 
 // Button handlers

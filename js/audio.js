@@ -5,14 +5,22 @@ function getAudioContext() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
     return audioCtx;
 }
 
-function playHitSound() {
+function ensureAudioReady() {
     const ctx = getAudioContext();
+
+    return ctx.resume()
+        .catch(() => {})
+        .then(() => ctx);
+}
+
+function unlockAudio() {
+    ensureAudioReady();
+}
+
+function playBeep(ctx) {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'square';
@@ -26,4 +34,10 @@ function playHitSound() {
     osc.stop(ctx.currentTime + 0.15);
 }
 
-export { getAudioContext, playHitSound };
+function playHitSound() {
+    ensureAudioReady().then((ctx) => {
+        playBeep(ctx);
+    });
+}
+
+export { getAudioContext, unlockAudio, playHitSound };
