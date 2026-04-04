@@ -24,15 +24,15 @@ function setupTouchInput(canvas) {
         mouseY = (touch.clientY - rect.top) * scaleY;
     }, { passive: false });
     
-    return canvas.addEventListener("touchstart", (e) => {
-        e.preventDefault();
+    return (e) => {
+        if (e.cancelable) e.preventDefault();
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
         const touch = e.touches[0];
         mouseX = (touch.clientX - rect.left) * scaleX;
         mouseY = (touch.clientY - rect.top) * scaleY;
-    }, { passive: false });
+    };
 }
 
 function getMousePosition() {
