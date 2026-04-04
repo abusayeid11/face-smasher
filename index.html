@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FACE SMASHER</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>FACE SMASHER</h1>
+        
+        <div class="controls">
+            <span id="scoreLabel">Smashed: 0</span>
+            
+            <div class="upload-section">
+                <label for="imageUpload" class="upload-btn">Upload Face</label>
+                <input type="file" id="imageUpload" accept="image/*">
+                <span id="fileName">No file selected</span>
+            </div>
+            
+            <div class="tool-section">
+                <span class="tool-label">Choose Tool:</span>
+                <div class="tool-buttons">
+                    <button class="tool-btn selected" data-tool="fist">👊 Fist</button>
+                    <button class="tool-btn" data-tool="hammer">🔨 Hammer</button>
+                    <button class="tool-btn" data-tool="glove">🥊 Glove</button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="resetScoreBtn">Reset Score</button>
+                <button id="resetSpeedBtn">Normal Speed</button>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <p id="instructions">Upload a face, pick a tool, then smash!</p>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
