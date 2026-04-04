@@ -1,9 +1,9 @@
 // Main entry point - Face Smasher
 
 // Import modules
-import { unlockAudio, playHitSound } from './js/audio.js';
+import { unlockAudio, playHitSound, playToolSound } from './js/audio.js';
 import { face, loadFaceFromFile, loadDefaultFace, resetFacePosition, updateFaceScale, clearMarks } from './js/face.js';
-import { tool, loadTools, initToolSelector, updateToolScale } from './js/tool.js';
+import { tool, loadTools, initToolSelector, updateToolScale, getCurrentToolName } from './js/tool.js';
 import { createMark, drawMark } from './js/marks.js';
 import { setupMouseInput, setupTouchInput, getMousePosition } from './js/input.js';
 import { initGame } from './js/game.js';
@@ -44,6 +44,8 @@ const touchStartHandler = setupTouchInput(canvas);
 const game = initGame(canvas, ctx, scoreLabel, {
     face,
     tool,
+    playToolSound,
+    getToolName: getCurrentToolName,
     playHitSound,
     createMark,
     drawMark,

@@ -1,5 +1,21 @@
 // Audio module - handles sound effects
 let audioCtx = null;
+const audioFiles = {
+    punch: 'audio/punch.mp3',
+    slap: 'audio/slap.mp3',
+    hammer: 'audio/hammer.mp3'
+};
+const audioPlayers = {};
+
+function initAudioPlayers() {
+    if (Object.keys(audioPlayers).length > 0) return;
+
+    Object.entries(audioFiles).forEach(([toolName, src]) => {
+        const audio = new Audio(src);
+        audio.preload = 'auto';
+        audioPlayers[toolName] = audio;
+    });
+}
 
 function getAudioContext() {
     if (!audioCtx) {
@@ -20,6 +36,8 @@ function ensureAudioReady() {
 }
 
 function unlockAudio() {
+    initAudioPlayers();
+
     const ctx = ensureAudioReady();
 
     // Prime the context with a near-silent click so future playback is unlocked on mobile.
@@ -30,6 +48,16 @@ function unlockAudio() {
     gain.gain.setValueAtTime(0.0001, ctx.currentTime);
     osc.start();
     osc.stop(ctx.currentTime + 0.01);
+
+    // Warm up HTMLAudio playback path for mobile browsers.
+    Object.values(audioPlayers).forEach((player) => {
+        player.play().then(() => {
+            player.pause();
+            player.currentTime = 0;
+        }).catch(() => {
+            // Ignore here, this is just a best-effort unlock attempt.
+        });
+    });
 }
 
 function playBeep(ctx) {
@@ -46,9 +74,75 @@ function playBeep(ctx) {
     osc.stop(ctx.currentTime + 0.15);
 }
 
-function playHitSound() {
-    const ctx = ensureAudioReady();
-    playBeep(ctx);
+function normalizeToolName(toolName) {
+    const name = String(toolName || 'punch').toLowerCase();
+
+    if (name === 'hammer') return 'hammer';
+    if (name === 'slap' || name === 'glove') return 'slap';
+    if (name === 'punch' || name === 'fist') return 'punch';
+    return 'punch';
 }
 
-export { getAudioContext, unlockAudio, playHitSound };
+function playToolSound(toolName = 'punch') {
+    const mappedTool = normalizeToolName(toolName);
+    initAudioPlayers();
+
+    const basePlayer = audioPlayers[mappedTool];
+    if (basePlayer) {
+        const player = basePlayer.cloneNode();
+        player.volume = mappedTool === 'hammer' ? 0.95 : 0.85;
+        player.play().catch(() => {
+            playFallbackTone(mappedTool);
+        });
+        return;
+    }
+
+    playFallbackTone(mappedTool);
+}
+
+function playFallbackTone(mappedTool) {
+    const ctx = ensureAudioReady();
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (mappedTool === 'hammer') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(90, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.24);
+        gain.gain.setValueAtTime(0.75, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+        return;
+    }
+
+    if (mappedTool === 'slap') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(700, now);
+        osc.frequency.exponentialRampToValueAtTime(260, now + 0.06);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.07);
+        osc.start(now);
+        osc.stop(now + 0.07);
+        return;
+    }
+
+    // Default punch sound.
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(60, now + 0.12);
+    gain.gain.setValueAtTime(0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+    osc.start(now);
+    osc.stop(now + 0.15);
+}
+
+function playHitSound() {
+    playToolSound('punch');
+}
+
+export { getAudioContext, unlockAudio, playHitSound, playToolSound };
