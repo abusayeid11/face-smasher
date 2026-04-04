@@ -7,8 +7,10 @@ import { tool, loadTools, initToolSelector, updateToolScale, getCurrentToolName 
 import { createMark, drawMark } from './js/marks.js';
 import { setupMouseInput, setupTouchInput, getMousePosition } from './js/input.js';
 import { initGame } from './js/game.js';
-import { createCommentaryAnimator } from './js/commentary.js';
-import { getIntroMessage, getHitMessage, getMissMessage } from './js/commentaryText.js';
+import { createCommentaryAnimator } from './js/commentary/commentary.js';
+import { getIntroMessage, getHitMessage, getMissMessage } from './js/commentary/commentaryText.js';
+import { createComicPopupAnimator } from './js/comicEffects/comicPopups.js';
+import { getComicHitText, getComicMissText } from './js/comicEffects/comicText.js';
 
 // Get DOM elements
 const canvas = document.getElementById("gameCanvas");
@@ -25,6 +27,7 @@ const commentaryStage = document.getElementById("commentaryStage");
 const commentaryBubble = document.getElementById("commentaryBubble");
 const commentaryMessage = document.getElementById("commentaryMessage");
 const commentaryIcons = document.getElementById("commentaryIcons");
+const comicPopStage = document.getElementById("comicPopStage");
 const plainInstructionMessage = "Smash the face to score.";
 
 function setStatusMessage(text) {
@@ -43,6 +46,11 @@ const commentaryAnimator = createCommentaryAnimator({
     icons: commentaryIcons
 });
 
+const comicPopAnimator = createComicPopupAnimator({
+    stage: comicPopStage,
+    canvas
+});
+
 function setComedyButtonState() {
     if (toggleComedyText) {
         toggleComedyText.textContent = comedyModeEnabled
@@ -54,6 +62,7 @@ function setComedyButtonState() {
 
     if (!comedyModeEnabled) {
         commentaryAnimator.clear();
+        comicPopAnimator.clear();
         setStatusMessage(plainInstructionMessage);
     }
 }
@@ -108,9 +117,10 @@ const game = initGame(canvas, ctx, scoreLabel, {
     startTimer: () => startGameTimer(),
     getMousePos: getMousePosition,
     triggerSmashAnim: () => { tool.smashAnim = 1; },
-    onSuccessfulSmash: ({ score, toolName, combo }) => {
+    onSuccessfulSmash: ({ score, toolName, combo, hitPos }) => {
         if (!comedyModeEnabled) {
             commentaryAnimator.clear();
+            comicPopAnimator.clear();
             setStatusMessage(plainInstructionMessage);
             return;
         }
@@ -122,16 +132,22 @@ const game = initGame(canvas, ctx, scoreLabel, {
         } else {
             commentaryAnimator.showHit(message, toolName);
         }
+
+        const comicText = getComicHitText(toolName, combo);
+        comicPopAnimator.show(comicText, hitPos, toolName, combo, "hit");
     },
     onMissSmash: ({ toolName }) => {
         if (comedyModeEnabled) {
             const message = getMissMessage(toolName);
             setStatusMessage(message);
             commentaryAnimator.showMiss(message, toolName);
+            const comicText = getComicMissText(toolName);
+            comicPopAnimator.show(comicText, getMousePosition(), toolName, 0, "miss");
             return;
         }
 
         commentaryAnimator.clear();
+        comicPopAnimator.clear();
         setStatusMessage(plainInstructionMessage);
     }
 });

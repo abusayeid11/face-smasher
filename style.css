@@ -6,6 +6,12 @@ body {
     padding: 10px;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 .game-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -166,6 +172,7 @@ h1 {
     
     cursor: none;
     
+    width: 100%;
     max-width: 100%;
     height: auto;
     
@@ -173,6 +180,241 @@ h1 {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.canvas-stack {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    width: min(100%, 800px);
+}
+
+.canvas-stack canvas {
+    display: block;
+}
+
+.comic-pop-stage {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
+}
+
+.comic-pop {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    animation: toolPop 0.9s ease-out forwards;
+}
+
+.comic-pop-text {
+    display: inline-block;
+    font-family: Impact, "Arial Black", "Segoe UI Black", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: clamp(22px, 4.2vw, 44px);
+    letter-spacing: 1px;
+    color: var(--pop-color, #e5392d);
+    -webkit-text-stroke: 2px #151515;
+    text-shadow: 2px 2px 0 var(--pop-accent, #fff6b0), 4px 4px 0 #151515;
+    animation: textPop 0.9s ease-out forwards;
+}
+
+.comic-pop.comic-combo .comic-pop-text {
+    font-size: clamp(28px, 5vw, 56px);
+    text-shadow: 2px 2px 0 #ffe084, 6px 6px 0 #151515;
+}
+
+.comic-pop.pop-anim-punch {
+    animation-name: punchPop;
+}
+
+.comic-pop.pop-anim-slap {
+    animation-name: slapSwipe;
+}
+
+.comic-pop.pop-anim-hammer {
+    animation-name: hammerSmash;
+}
+
+.comic-pop.pop-anim-miss {
+    animation-name: missFizzle;
+}
+
+.comic-pop-text.text-anim-burst {
+    animation-name: textBurst;
+}
+
+.comic-pop-text.text-anim-spiral {
+    animation-name: textSpiral;
+}
+
+.comic-pop-text.text-anim-snap {
+    animation-name: textSnap;
+}
+
+.comic-pop-text.text-anim-shock {
+    animation-name: textShock;
+}
+
+.comic-pop-text.text-anim-drift {
+    animation-name: textDrift;
+}
+
+.comic-pop-text.text-anim-pop {
+    animation-name: textPop;
+}
+
+@keyframes toolPop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) rotate(var(--pop-rot));
+    }
+    45% {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(1.1) rotate(var(--pop-rot));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(0.95) rotate(var(--pop-rot));
+    }
+}
+
+@keyframes punchPop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.15) rotate(var(--pop-rot));
+    }
+    35% {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(1.3) rotate(var(--pop-rot));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(0.9) rotate(var(--pop-rot));
+    }
+}
+
+@keyframes slapSwipe {
+    0% {
+        opacity: 0;
+        transform: translate(calc(-50% - 30px), -50%) scale(0.3) rotate(var(--pop-rot));
+    }
+    45% {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(1.15) rotate(var(--pop-rot));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--pop-dx) + 18px), calc(-50% + var(--pop-dy))) scale(0.9) rotate(var(--pop-rot));
+    }
+}
+
+@keyframes hammerSmash {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% - 40px)) scale(0.2) rotate(var(--pop-rot));
+    }
+    40% {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(1.25) rotate(var(--pop-rot));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(0.85) rotate(var(--pop-rot));
+    }
+}
+
+@keyframes missFizzle {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.4) rotate(var(--pop-rot));
+    }
+    60% {
+        opacity: 0.9;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy))) scale(1) rotate(var(--pop-rot));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--pop-dx)), calc(-50% + var(--pop-dy) + 16px)) scale(0.8) rotate(var(--pop-rot));
+    }
+}
+
+@keyframes textPop {
+    0% {
+        transform: scale(0.7) skewX(var(--pop-skew));
+        filter: blur(1px);
+    }
+    50% {
+        transform: scale(1.1) skewX(0deg);
+        filter: blur(0px);
+    }
+    100% {
+        transform: scale(0.95);
+        filter: blur(0px);
+    }
+}
+
+@keyframes textBurst {
+    0% {
+        transform: scale(0.6) rotate(-2deg);
+    }
+    40% {
+        transform: scale(1.25) rotate(3deg);
+    }
+    100% {
+        transform: scale(0.95) rotate(0deg);
+    }
+}
+
+@keyframes textSpiral {
+    0% {
+        transform: scale(0.5) rotate(-10deg);
+    }
+    60% {
+        transform: scale(1.15) rotate(8deg);
+    }
+    100% {
+        transform: scale(0.95) rotate(0deg);
+    }
+}
+
+@keyframes textSnap {
+    0% {
+        transform: scale(0.6) skewX(var(--pop-skew));
+    }
+    45% {
+        transform: scale(1.2) skewX(0deg);
+    }
+    100% {
+        transform: scale(0.95) skewX(0deg);
+    }
+}
+
+@keyframes textShock {
+    0% {
+        transform: scale(0.55);
+        filter: drop-shadow(0 0 0 rgba(255, 240, 130, 0));
+    }
+    55% {
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 8px rgba(255, 240, 130, 0.7));
+    }
+    100% {
+        transform: scale(0.95);
+        filter: drop-shadow(0 0 0 rgba(255, 240, 130, 0));
+    }
+}
+
+@keyframes textDrift {
+    0% {
+        opacity: 0.8;
+        transform: translateY(0) scale(0.85);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+    }
 }
 
 .controls {
