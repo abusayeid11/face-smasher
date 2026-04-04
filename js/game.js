@@ -11,7 +11,6 @@ function initGame(canvas, ctx, scoreLabel, options) {
         tool, 
         playToolSound, 
         getToolName,
-        playHitSound,
         createMark, 
         drawMark, 
         resetFacePos, 
@@ -110,7 +109,7 @@ function initGame(canvas, ctx, scoreLabel, options) {
                 const relX = pos.x - face.x;
                 const relY = pos.y - face.y;
                 
-                const newMarks = createMark(relX, relY);
+                const newMarks = createMark(getToolName(), relX, relY);
                 face.marks.push(...newMarks);
                 
                 resetFacePos();

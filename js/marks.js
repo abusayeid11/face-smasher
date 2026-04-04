@@ -1,31 +1,89 @@
-// Marks module - handles bruise and mark generation
+// Marks module - handles bruise and mark generation with tool-specific patterns
 
-const BRUISE_TYPES = [
-    { colors: ['rgba(180,20,20,0.6)', 'rgba(120,10,40,0.4)', 'rgba(80,0,30,0.2)'] },
-    { colors: ['rgba(100,20,60,0.6)', 'rgba(70,10,50,0.4)', 'rgba(50,5,40,0.2)'] },
-    { colors: ['rgba(60,20,80,0.5)', 'rgba(40,30,60,0.3)', 'rgba(30,40,50,0.1)'] },
-    { colors: ['rgba(50,80,40,0.4)', 'rgba(80,120,50,0.2)'] }
-];
+const BRUISE_PATTERNS = {
+    punch: {
+        mainSize: { rxMin: 6, rxMax: 8, ryMin: 5, ryMax: 7 },
+        spread: 4,
+        colors: [
+            'rgba(60,0,20,0.8)',
+            'rgba(100,10,30,0.6)',
+            'rgba(140,30,50,0.3)'
+        ],
+        vesselCount: { min: 2, max: 4 },
+        vesselDist: { min: 3, max: 6 },
+        swellingSize: { rxMin: 10, rxMax: 12, ryMin: 8, ryMax: 10 },
+        swellingColor: 'rgba(255,200,200,0.15)'
+    },
+    slap: {
+        mainSize: { rxMin: 10, rxMax: 14, ryMin: 8, ryMax: 12 },
+        spread: 8,
+        colors: [
+            'rgba(200,50,50,0.7)',
+            'rgba(180,80,80,0.5)',
+            'rgba(255,150,150,0.3)'
+        ],
+        vesselCount: { min: 1, max: 3 },
+        vesselDist: { min: 6, max: 10 },
+        swellingSize: { rxMin: 15, rxMax: 18, ryMin: 12, ryMax: 15 },
+        swellingColor: 'rgba(255,180,180,0.2)'
+    },
+    hammer: {
+        mainSize: { rxMin: 8, rxMax: 10, ryMin: 8, ryMax: 10 },
+        spread: 6,
+        colors: [
+            'rgba(40,0,10,0.9)',
+            'rgba(60,10,20,0.7)',
+            'rgba(80,20,40,0.4)'
+        ],
+        vesselCount: { min: 3, max: 5 },
+        vesselDist: { min: 4, max: 8 },
+        swellingSize: { rxMin: 14, rxMax: 16, ryMin: 14, ryMax: 16 },
+        swellingColor: 'rgba(200,150,150,0.25)',
+        bloodCount: { min: 5, max: 10 },
+        bloodDist: { min: 15, max: 30 }
+    }
+};
 
-function createMark(hitX, hitY) {
-    const bruiseType = BRUISE_TYPES[Math.floor(Math.random() * 3)];
+function createMark(toolName, hitX, hitY) {
+    const pattern = BRUISE_PATTERNS[toolName] || BRUISE_PATTERNS.punch;
     const marks = [];
     
-    // Main bruise
+    // Main bruise with tool-specific size
+    const rx = pattern.mainSize.rxMin + Math.random() * (pattern.mainSize.rxMax - pattern.mainSize.rxMin);
+    const ry = pattern.mainSize.ryMin + Math.random() * (pattern.mainSize.ryMax - pattern.mainSize.ryMin);
+    
     marks.push({
         x: hitX,
         y: hitY,
-        rx: 6 + Math.random() * 4,
-        ry: 5 + Math.random() * 3,
+        rx: rx,
+        ry: ry,
         rot: Math.random() * Math.PI,
         type: 'bruise',
-        colors: bruiseType.colors
+        colors: pattern.colors
     });
     
+    // Additional impact marks for hammer (circular pattern)
+    if (toolName === 'hammer') {
+        for (let i = 0; i < 3; i++) {
+            const angle = (Math.PI * 2 / 3) * i + Math.random() * 0.3;
+            const dist = 8 + Math.random() * 4;
+            marks.push({
+                x: hitX + Math.cos(angle) * dist,
+                y: hitY + Math.sin(angle) * dist,
+                rx: 3 + Math.random() * 2,
+                ry: 3 + Math.random() * 2,
+                rot: Math.random() * Math.PI,
+                type: 'bruise',
+                colors: pattern.colors
+            });
+        }
+    }
+    
     // Broken blood vessels (tiny dots)
-    for (let i = 0; i < 2 + Math.random() * 2; i++) {
+    const vesselCount = Math.floor(pattern.vesselCount.min + Math.random() * (pattern.vesselCount.max - pattern.vesselCount.min));
+    for (let i = 0; i < vesselCount; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const dist = 4 + Math.random() * 5;
+        const dist = pattern.vesselDist.min + Math.random() * (pattern.vesselDist.max - pattern.vesselDist.min);
         marks.push({
             x: hitX + Math.cos(angle) * dist,
             y: hitY + Math.sin(angle) * dist,
@@ -37,16 +95,72 @@ function createMark(hitX, hitY) {
         });
     }
     
-    // Swelling/discoloration
+    // Swelling/discoloration with tool-specific size
+    const swrx = pattern.swellingSize.rxMin + Math.random() * (pattern.swellingSize.rxMax - pattern.swellingSize.rxMin);
+    const swry = pattern.swellingSize.ryMin + Math.random() * (pattern.swellingSize.ryMax - pattern.swellingSize.ryMin);
     marks.push({
         x: hitX,
         y: hitY,
-        rx: 10 + Math.random() * 4,
-        ry: 8 + Math.random() * 3,
+        rx: swrx,
+        ry: swry,
         rot: Math.random() * Math.PI,
         type: 'swelling',
-        color: 'rgba(255,200,200,0.15)'
+        color: pattern.swellingColor
     });
+    
+    // Additional surface damage for slap
+    if (toolName === 'slap') {
+        for (let i = 0; i < 4; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 12 + Math.random() * 8;
+            marks.push({
+                x: hitX + Math.cos(angle) * dist,
+                y: hitY + Math.sin(angle) * dist,
+                rx: 2 + Math.random() * 2,
+                ry: 2 + Math.random() * 2,
+                rot: Math.random() * Math.PI,
+                type: 'vessel',
+                color: 'rgba(255,100,100,0.4)'
+            });
+        }
+    }
+    
+    // Blood splatter for hammer (spreads far and wide)
+    if (toolName === 'hammer' && pattern.bloodCount) {
+        const bloodCount = Math.floor(pattern.bloodCount.min + Math.random() * (pattern.bloodCount.max - pattern.bloodCount.min));
+        
+        // Main blood drops
+        for (let i = 0; i < bloodCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = pattern.bloodDist.min + Math.random() * (pattern.bloodDist.max - pattern.bloodDist.min);
+            const size = 2 + Math.random() * 4;
+            marks.push({
+                x: hitX + Math.cos(angle) * dist,
+                y: hitY + Math.sin(angle) * dist,
+                rx: size,
+                ry: size * (0.5 + Math.random() * 0.5),
+                rot: Math.random() * Math.PI,
+                type: 'blood',
+                color: 'rgba(180,0,0,0.8)'
+            });
+        }
+        
+        // Blood trail drops (smaller, more scattered)
+        for (let i = 0; i < bloodCount * 1.5; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = pattern.bloodDist.max + Math.random() * 20;
+            const size = 1 + Math.random() * 2;
+            marks.push({
+                x: hitX + Math.cos(angle) * dist,
+                y: hitY + Math.sin(angle) * dist,
+                rx: size,
+                ry: size * (0.5 + Math.random() * 0.5),
+                rot: Math.random() * Math.PI,
+                type: 'blood',
+                color: 'rgba(150,0,0,0.6)'
+            });
+        }
+    }
     
     return marks;
 }
@@ -75,9 +189,14 @@ function drawMark(ctx, mark, offsetX, offsetY) {
         ctx.ellipse(0, 0, mark.rx, mark.ry, 0, 0, 2 * Math.PI);
         ctx.fillStyle = mark.color;
         ctx.fill();
+    } else if (mark.type === 'blood') {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, mark.rx, mark.ry, 0, 0, 2 * Math.PI);
+        ctx.fillStyle = mark.color;
+        ctx.fill();
     }
     
     ctx.restore();
 }
 
-export { createMark, drawMark };
+export { createMark, drawMark, BRUISE_PATTERNS };
