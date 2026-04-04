@@ -6,11 +6,64 @@ body {
     padding: 10px;
 }
 
+.game-container {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.gameplay-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 h1 {
     color: #cc0000;
     text-shadow: 2px 2px #000;
     margin: 10px 0;
     font-size: 2rem;
+}
+
+.setup-overlay {
+    position: absolute;
+    inset: 70px 0 auto 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.setup-overlay.hidden {
+    display: none;
+}
+
+.setup-card {
+    width: min(92vw, 640px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 4px solid #333;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.setup-card h2 {
+    margin: 0;
+    color: #cc0000;
+    font-size: 1.4rem;
+}
+
+.setup-help {
+    margin: 0;
+    color: #333;
+    font-size: 0.95rem;
 }
 
 #gameCanvas {
@@ -65,11 +118,11 @@ h1 {
     background: #555;
 }
 
-#imageUpload {
+#setupImageUpload {
     display: none;
 }
 
-#fileName {
+#setupFileName {
     font-size: 0.9rem;
     color: #666;
     font-style: italic;
@@ -138,6 +191,15 @@ button:hover {
     background: #333;
 }
 
+.start-btn {
+    background: #cc0000;
+    font-weight: bold;
+}
+
+.start-btn:hover {
+    background: #a30000;
+}
+
 p {
     margin: 10px 0;
     font-size: 0.9rem;
@@ -147,6 +209,18 @@ p {
 @media (max-width: 600px) {
     h1 {
         font-size: 1.5rem;
+    }
+
+    .setup-overlay {
+        inset: 55px 0 auto 0;
+    }
+
+    .setup-card {
+        padding: 14px;
+    }
+
+    .setup-card h2 {
+        font-size: 1.2rem;
     }
     
     #scoreLabel {

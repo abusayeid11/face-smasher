@@ -64,7 +64,11 @@ function updateToolScale() {
 }
 
 function getCurrentToolName() {
+    const selectedButton = document.querySelector('.tool-btn.selected');
+    if (selectedButton && selectedButton.dataset.tool) {
+        currentToolName = selectedButton.dataset.tool;
+    }
     return currentToolName;
 }
 
-export { tool, currentToolName, loadTools, initToolSelector, updateToolScale, getCurrentToolName };
+export { tool, loadTools, initToolSelector, updateToolScale, getCurrentToolName };
