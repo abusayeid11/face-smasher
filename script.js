@@ -7,6 +7,8 @@ import { tool, loadTools, initToolSelector, updateToolScale, getCurrentToolName 
 import { createMark, drawMark } from './js/marks.js';
 import { setupMouseInput, setupTouchInput, getMousePosition } from './js/input.js';
 import { initGame } from './js/game.js';
+import { createCommentaryAnimator } from './js/commentary.js';
+import { getIntroMessage, getHitMessage, getMissMessage, getPlainStatusMessage } from './js/commentaryText.js';
 
 // Get DOM elements
 const canvas = document.getElementById("gameCanvas");
@@ -27,120 +29,13 @@ const commentaryIcons = document.getElementById("commentaryIcons");
 
 let gameStarted = false;
 let comedyModeEnabled = false;
-let commentaryAnimToken = 0;
-let iconBurstTimer = null;
-let messageTimer = null;
-let stageResetTimer = null;
 
-const funnyHitLines = [
-    "Face met destiny.",
-    "Direct hit. Ego has left the chat.",
-    "That looked personal.",
-    "Certified bonk moment.",
-    "Audience score: 10/10 chaos."
-];
-
-const funnyMissLines = [
-    "Missed. The face is laughing at you.",
-    "Air attack unlocked.",
-    "Close... like pineapple on pizza close.",
-    "You hit pure confidence.",
-    "Swing and emotional damage."
-];
-
-function randomLine(lines) {
-    return lines[Math.floor(Math.random() * lines.length)];
-}
-
-function getComboText(combo) {
-    if (combo >= 8) return ` ${combo}x combo. Absolute menace.`;
-    if (combo >= 5) return ` ${combo}x combo. Hands are on fire.`;
-    if (combo >= 3) return ` ${combo}x combo. Things are escalating.`;
-    return "";
-}
-
-function normalizeToolLabel(toolName) {
-    return toolName ? `${toolName[0].toUpperCase()}${toolName.slice(1)}` : "Tool";
-}
-
-function clearCommentaryTimers() {
-    clearInterval(iconBurstTimer);
-    clearInterval(messageTimer);
-    clearTimeout(stageResetTimer);
-}
-
-function burstIcons(iconPool, count, speedMs) {
-    if (!commentaryIcons) return;
-
-    let created = 0;
-    clearInterval(iconBurstTimer);
-    iconBurstTimer = setInterval(() => {
-        if (created >= count) {
-            clearInterval(iconBurstTimer);
-            return;
-        }
-
-        const icon = document.createElement("span");
-        icon.className = "commentary-icon";
-        icon.textContent = iconPool[Math.floor(Math.random() * iconPool.length)];
-        icon.style.left = `${8 + Math.random() * 84}%`;
-        icon.style.setProperty("--driftX", `${Math.round((Math.random() - 0.5) * 80)}px`);
-        icon.style.setProperty("--riseY", `${-50 - Math.round(Math.random() * 70)}px`);
-        icon.style.setProperty("--spin", `${Math.round((Math.random() - 0.5) * 90)}deg`);
-        icon.style.setProperty("--dur", `${900 + Math.round(Math.random() * 500)}ms`);
-        icon.style.setProperty("--endScale", `${(1 + Math.random() * 0.5).toFixed(2)}`);
-        commentaryIcons.appendChild(icon);
-
-        setTimeout(() => icon.remove(), 1700);
-        created += 1;
-    }, speedMs);
-}
-
-function animateCommentaryMessage(message, mood = "hit") {
-    if (!commentaryStage || !commentaryBubble || !commentaryMessage) return;
-
-    const myToken = ++commentaryAnimToken;
-    clearCommentaryTimers();
-    commentaryIcons.innerHTML = "";
-    commentaryBubble.classList.remove("hit", "miss", "combo");
-    commentaryBubble.classList.add(mood);
-    commentaryStage.classList.remove("active");
-
-    // Restart pop animation reliably.
-    void commentaryBubble.offsetWidth;
-    commentaryStage.classList.add("active");
-
-    const cleanMessage = String(message || "").trim();
-    let idx = 0;
-    commentaryMessage.innerHTML = `<span class="commentary-message-caret"></span>`;
-
-    messageTimer = setInterval(() => {
-        if (myToken !== commentaryAnimToken) return;
-
-        idx += 2;
-        if (idx >= cleanMessage.length) {
-            commentaryMessage.textContent = cleanMessage;
-            clearInterval(messageTimer);
-            return;
-        }
-
-        const partial = cleanMessage.slice(0, idx);
-        commentaryMessage.innerHTML = `${partial}<span class="commentary-message-caret"></span>`;
-    }, 24);
-
-    if (mood === "miss") {
-        burstIcons(["😵", "💨", "🙈", "🤡", "😅"], 7, 140);
-    } else if (mood === "combo") {
-        burstIcons(["🔥", "💥", "🤣", "⚡", "🏆", "👊"], 12, 95);
-    } else {
-        burstIcons(["💥", "😂", "✨", "👊", "🎯"], 9, 110);
-    }
-
-    stageResetTimer = setTimeout(() => {
-        if (myToken !== commentaryAnimToken) return;
-        commentaryStage.classList.remove("active");
-    }, 2900);
-}
+const commentaryAnimator = createCommentaryAnimator({
+    stage: commentaryStage,
+    bubble: commentaryBubble,
+    message: commentaryMessage,
+    icons: commentaryIcons
+});
 
 function setComedyButtonState() {
     if (toggleComedyText) {
@@ -152,10 +47,7 @@ function setComedyButtonState() {
     toggleComedyBtn.setAttribute("aria-checked", comedyModeEnabled ? "true" : "false");
 
     if (!comedyModeEnabled && commentaryMessage) {
-        commentaryMessage.textContent = "Commentary is resting. Smash to play clean mode.";
-        commentaryStage?.classList.remove("active");
-        clearCommentaryTimers();
-        if (commentaryIcons) commentaryIcons.innerHTML = "";
+        commentaryAnimator.setIdleMessage("Commentary is resting. Smash to play clean mode.");
     }
 }
 
@@ -171,7 +63,8 @@ toggleComedyBtn.addEventListener("click", () => {
             : "Commentary disabled. Clean mode activated.";
 
         if (comedyModeEnabled) {
-            animateCommentaryMessage("Mic check complete. Let the chaos commentary begin!", "hit");
+            const currentTool = getCurrentToolName();
+            commentaryAnimator.showHit(getIntroMessage(currentTool), currentTool);
         }
     }
 });
@@ -210,20 +103,23 @@ const game = initGame(canvas, ctx, scoreLabel, {
     triggerSmashAnim: () => { tool.smashAnim = 1; },
     onSuccessfulSmash: ({ score, toolName, combo }) => {
         if (!comedyModeEnabled) {
-            instructions.textContent = `${normalizeToolLabel(toolName)} connected. Total smashed: ${score}.`;
+            instructions.textContent = getPlainStatusMessage(toolName, score);
             return;
         }
 
-        const comboText = getComboText(combo);
-        const message = `${randomLine(funnyHitLines)} ${normalizeToolLabel(toolName)} used.${comboText}`;
+        const message = getHitMessage(toolName, combo);
         instructions.textContent = message;
-        animateCommentaryMessage(message, combo >= 3 ? "combo" : "hit");
+        if (combo >= 3) {
+            commentaryAnimator.showCombo(message, toolName);
+        } else {
+            commentaryAnimator.showHit(message, toolName);
+        }
     },
-    onMissSmash: () => {
+    onMissSmash: ({ toolName }) => {
         if (comedyModeEnabled) {
-            const message = randomLine(funnyMissLines);
+            const message = getMissMessage(toolName);
             instructions.textContent = message;
-            animateCommentaryMessage(message, "miss");
+            commentaryAnimator.showMiss(message, toolName);
         }
     }
 });

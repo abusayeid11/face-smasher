@@ -133,7 +133,9 @@ function initGame(canvas, ctx, scoreLabel, options) {
                 startTimer();
             } else if (typeof onMissSmash === 'function') {
                 comboCount = 0;
-                onMissSmash();
+                onMissSmash({
+                    toolName: currentToolName
+                });
             }
         }
     }

@@ -393,6 +393,18 @@ p {
     animation: bubblePop 0.38s ease;
 }
 
+.commentary-stage.tool-punch.active .commentary-bubble {
+    animation: bubblePop 0.38s ease, punchPulse 0.3s ease;
+}
+
+.commentary-stage.tool-slap.active .commentary-bubble {
+    animation: bubblePop 0.38s ease, slapWobble 0.5s ease;
+}
+
+.commentary-stage.tool-hammer.active .commentary-bubble {
+    animation: bubblePop 0.38s ease, hammerThud 0.32s ease;
+}
+
 .commentary-bubble.hit {
     background: linear-gradient(130deg, #fff2e4 0%, #ffe1c9 100%);
     border-color: #7f2d0b;
@@ -502,5 +514,47 @@ p {
     
     p {
         font-size: 1rem;
+    }
+}
+
+@keyframes punchPulse {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(0) scale(1.03);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes slapWobble {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(0) rotate(-1.8deg);
+    }
+    50% {
+        transform: translateY(0) rotate(1.8deg);
+    }
+    75% {
+        transform: translateY(0) rotate(-0.8deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes hammerThud {
+    0% {
+        transform: translateY(-4px) scale(1);
+    }
+    40% {
+        transform: translateY(2px) scale(1.02, 0.98);
+    }
+    100% {
+        transform: translateY(0) scale(1);
     }
 }
