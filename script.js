@@ -75,6 +75,21 @@ setupImageUpload.addEventListener('change', (e) => {
     setupFileName.textContent = file
         ? file.name
         : "No file selected (default face will be used)";
+
+    // If game has already started, replace the face immediately
+    if (file && gameStarted) {
+        unlockAudio();
+        loadFaceFromFile(
+            file,
+            setupFileName,
+            instructions,
+            () => resetFacePosition(canvas),
+            () => {
+                game.resetScore(scoreLabel);
+                clearMarks();
+            }
+        );
+    }
 });
 
 startGameBtn.addEventListener('click', () => {
