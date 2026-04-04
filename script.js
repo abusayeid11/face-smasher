@@ -8,13 +8,12 @@ import { createMark, drawMark } from './js/marks.js';
 import { setupMouseInput, setupTouchInput, getMousePosition } from './js/input.js';
 import { initGame } from './js/game.js';
 import { createCommentaryAnimator } from './js/commentary.js';
-import { getIntroMessage, getHitMessage, getMissMessage, getPlainStatusMessage } from './js/commentaryText.js';
+import { getIntroMessage, getHitMessage, getMissMessage } from './js/commentaryText.js';
 
 // Get DOM elements
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreLabel = document.getElementById("scoreLabel");
-const instructions = document.getElementById("instructions");
 const setupOverlay = document.getElementById("setupOverlay");
 const gameplayArea = document.getElementById("gameplayArea");
 const setupImageUpload = document.getElementById("setupImageUpload");
@@ -26,6 +25,13 @@ const commentaryStage = document.getElementById("commentaryStage");
 const commentaryBubble = document.getElementById("commentaryBubble");
 const commentaryMessage = document.getElementById("commentaryMessage");
 const commentaryIcons = document.getElementById("commentaryIcons");
+const plainInstructionMessage = "Smash the face to score.";
+
+function setStatusMessage(text) {
+    if (commentaryMessage) {
+        commentaryMessage.textContent = text;
+    }
+}
 
 let gameStarted = false;
 let comedyModeEnabled = true;
@@ -46,8 +52,9 @@ function setComedyButtonState() {
     toggleComedyBtn.classList.toggle("off", !comedyModeEnabled);
     toggleComedyBtn.setAttribute("aria-checked", comedyModeEnabled ? "true" : "false");
 
-    if (!comedyModeEnabled && commentaryMessage) {
-        commentaryAnimator.setIdleMessage("Commentary is resting. Smash to play clean mode.");
+    if (!comedyModeEnabled) {
+        commentaryAnimator.clear();
+        setStatusMessage(plainInstructionMessage);
     }
 }
 
@@ -58,9 +65,9 @@ toggleComedyBtn.addEventListener("click", () => {
     setComedyButtonState();
 
     if (gameStarted) {
-        instructions.textContent = comedyModeEnabled
+        setStatusMessage(comedyModeEnabled
             ? "Commentary enabled. Funny updates are back."
-            : "Commentary disabled. Clean mode activated.";
+            : "Commentary disabled. Clean mode activated.");
 
         if (comedyModeEnabled) {
             const currentTool = getCurrentToolName();
@@ -103,12 +110,13 @@ const game = initGame(canvas, ctx, scoreLabel, {
     triggerSmashAnim: () => { tool.smashAnim = 1; },
     onSuccessfulSmash: ({ score, toolName, combo }) => {
         if (!comedyModeEnabled) {
-            instructions.textContent = getPlainStatusMessage(toolName, score);
+            commentaryAnimator.clear();
+            setStatusMessage(plainInstructionMessage);
             return;
         }
 
         const message = getHitMessage(toolName, combo);
-        instructions.textContent = message;
+        setStatusMessage(message);
         if (combo >= 3) {
             commentaryAnimator.showCombo(message, toolName);
         } else {
@@ -118,9 +126,13 @@ const game = initGame(canvas, ctx, scoreLabel, {
     onMissSmash: ({ toolName }) => {
         if (comedyModeEnabled) {
             const message = getMissMessage(toolName);
-            instructions.textContent = message;
+            setStatusMessage(message);
             commentaryAnimator.showMiss(message, toolName);
+            return;
         }
+
+        commentaryAnimator.clear();
+        setStatusMessage(plainInstructionMessage);
     }
 });
 
@@ -151,7 +163,7 @@ setupImageUpload.addEventListener('change', (e) => {
         loadFaceFromFile(
             file,
             setupFileName,
-            instructions,
+            commentaryMessage,
             () => resetFacePosition(canvas),
             () => {
                 game.resetScore(scoreLabel);
@@ -175,7 +187,7 @@ startGameBtn.addEventListener('click', () => {
         loadFaceFromFile(
             selectedFile,
             setupFileName,
-            instructions,
+            commentaryMessage,
             () => resetFacePosition(canvas),
             () => {
                 startGameTimer();
@@ -184,7 +196,7 @@ startGameBtn.addEventListener('click', () => {
         );
     } else {
         loadDefaultFace(
-            instructions,
+            commentaryMessage,
             () => resetFacePosition(canvas),
             () => {
                 startGameTimer();
