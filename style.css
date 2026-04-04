@@ -17,6 +17,10 @@ body {
     display: none !important;
 }
 
+.setup-overlay.hidden #startGameBtn {
+    display: none;
+}
+
 h1 {
     color: #cc0000;
     text-shadow: 2px 2px #000;
