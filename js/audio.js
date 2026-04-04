@@ -86,10 +86,12 @@ function normalizeToolName(toolName) {
 function playToolSound(toolName = 'punch') {
     const mappedTool = normalizeToolName(toolName);
     initAudioPlayers();
+    ensureAudioReady(); // Start/resume context synchronously
 
-    const basePlayer = audioPlayers[mappedTool];
-    if (basePlayer) {
-        const player = basePlayer.cloneNode();
+    const player = audioPlayers[mappedTool];
+    if (player) {
+        player.pause();
+        player.currentTime = 0;
         player.volume = mappedTool === 'hammer' ? 0.95 : 0.85;
         player.play().catch(() => {
             playFallbackTone(mappedTool);

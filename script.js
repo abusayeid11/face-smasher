@@ -68,7 +68,7 @@ canvas.addEventListener("touchstart", (e) => {
     if (gameStarted) {
         game.handleSmash();
     }
-});
+}, { passive: false });
 
 setupImageUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
