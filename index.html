@@ -8,45 +8,47 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>FACE SMASHER</h1>
+        <div class="main-content">
+            <div id="setupOverlay" class="setup-overlay">
+                <div class="setup-card">
+                    <h2>Setup Your Smash</h2>
+                    <p class="setup-help">Upload a face and pick a tool. Skip both to use defaults.</p>
 
-        <div id="setupOverlay" class="setup-overlay">
-            <div class="setup-card">
-                <h2>Setup Your Smash</h2>
-                <p class="setup-help">Upload a face and pick a tool. Skip both to use defaults.</p>
+                    <div class="upload-section">
+                        <label for="setupImageUpload" class="upload-btn">Upload Face</label>
+                        <input type="file" id="setupImageUpload" accept="image/*">
+                        <span id="setupFileName">No file selected (default face will be used)</span>
+                    </div>
 
-                <div class="upload-section">
-                    <label for="setupImageUpload" class="upload-btn">Upload Face</label>
-                    <input type="file" id="setupImageUpload" accept="image/*">
-                    <span id="setupFileName">No file selected (default face will be used)</span>
+                    <div class="tool-section">
+                        <span class="tool-label">Choose Tool:</span>
+                        <div class="tool-buttons">
+                            <button class="tool-btn selected" data-tool="punch">👊 Punch</button>
+                            <button class="tool-btn" data-tool="slap">👋 Slap</button>
+                            <button class="tool-btn" data-tool="hammer">🔨 Hammer</button>
+                        </div>
+                    </div>
+
+                    <button id="startGameBtn" class="start-btn">Start Smashing</button>
                 </div>
+            </div>
+            
+            <div id="gameplayArea" class="gameplay-area hidden">
+                        <h1>FACE SMASHER</h1>
 
-                <div class="tool-section">
-                    <span class="tool-label">Choose Tool:</span>
-                    <div class="tool-buttons">
-                        <button class="tool-btn selected" data-tool="punch">👊 Punch</button>
-                        <button class="tool-btn" data-tool="slap">👋 Slap</button>
-                        <button class="tool-btn" data-tool="hammer">🔨 Hammer</button>
+                <div class="controls">
+                    <span id="scoreLabel">Smashed: 0</span>
+                    
+                    <div class="action-buttons">
+                        <button id="resetScoreBtn">Reset Score</button>
+                        <button id="resetSpeedBtn">Normal Speed</button>
                     </div>
                 </div>
 
-                <button id="startGameBtn" class="start-btn">Start Smashing</button>
-            </div>
-        </div>
-        
-        <div id="gameplayArea" class="gameplay-area hidden">
-            <div class="controls">
-                <span id="scoreLabel">Smashed: 0</span>
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
                 
-                <div class="action-buttons">
-                    <button id="resetScoreBtn">Reset Score</button>
-                    <button id="resetSpeedBtn">Normal Speed</button>
-                </div>
+                <p id="instructions">Ready to smash!</p>
             </div>
-
-            <canvas id="gameCanvas" width="800" height="600"></canvas>
-            
-            <p id="instructions">Ready to smash!</p>
         </div>
     </div>
 
