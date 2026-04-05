@@ -6,6 +6,12 @@ body {
     padding: 10px;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 .game-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -20,6 +26,11 @@ body {
 .setup-overlay.hidden #startGameBtn {
     display: none;
 }
+
+.setup-overlay:not(.hidden) #toggleComedyBtn {
+    display: none;
+}
+
 
 h1 {
     color: #cc0000;
@@ -156,18 +167,12 @@ h1 {
 
 #gameCanvas {
     border: 10px solid #333;
-    background-color: #fff7d4;
-    background-image:
-        radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 45%),
-        radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 55%),
-        repeating-linear-gradient(135deg, rgba(255, 183, 77, 0.25) 0, rgba(255, 183, 77, 0.25) 12px, rgba(255, 153, 102, 0.15) 12px, rgba(255, 153, 102, 0.15) 24px),
-        url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='50' font-family='Arial' font-size='12' fill='%23e5e5e5' transform='rotate(-20 50 50)'%3EFACE SMASHER%3C/text%3E%3Ctext x='100' y='150' font-family='Arial' font-size='12' fill='%23d1d1d1' transform='rotate(-20 100 150)'%3EFACE SMASHER%3C/text%3E%3C/svg%3E");
-    background-size: 140% 140%, 160% 160%, 220% 220%, 200px 200px;
-    background-position: 0% 0%, 100% 0%, 0% 100%, 0 0;
-    animation: smashBgShift 12s ease-in-out infinite, smashBgPulse 6s ease-in-out infinite;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='50' font-family='Arial' font-size='12' fill='%23e5e5e5' transform='rotate(-20 50 50)'%3EFACE SMASHER%3C/text%3E%3Ctext x='100' y='150' font-family='Arial' font-size='12' fill='%23d1d1d1' transform='rotate(-20 100 150)'%3EFACE SMASHER%3C/text%3E%3C/svg%3E");
     
     cursor: none;
     
+    width: 100%;
     max-width: 100%;
     height: auto;
     
@@ -177,7 +182,6 @@ h1 {
     user-select: none;
 }
 
-/* Arena themes */
 #gameCanvas.arena-blast {
     background-color: #ffe7c3;
     background-image:
@@ -234,43 +238,21 @@ h1 {
         radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 55%),
         linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.15)),
         var(--arena-photo, linear-gradient(135deg, #444, #111));
-    background-size: 160% 160%, 100% 100%, cover;
-    background-position: 0% 0%, 0% 0%, center top;
+    background-size: 160% 160%, 100% 100%, contain;
+    background-position: 0% 0%, 0% 0%, center;
     background-repeat: no-repeat, no-repeat, no-repeat;
     animation: arenaPhotoPan 12s ease-in-out infinite;
 }
 
-@keyframes smashBgShift {
-    0% {
-        background-position: 0% 0%, 100% 0%, 0% 100%, 0 0;
-    }
-    25% {
-        background-position: 6% 8%, 92% 12%, 12% 86%, 30px 20px;
-    }
-    55% {
-        background-position: -4% 6%, 88% -2%, 6% 78%, 60px 40px;
-    }
-    80% {
-        background-position: 4% -6%, 98% 8%, -4% 90%, 20px 50px;
-    }
-    100% {
-        background-position: 0% 0%, 100% 0%, 0% 100%, 0 0;
-    }
+.canvas-stack {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    width: min(100%, 800px);
 }
 
-@keyframes smashBgPulse {
-    0% {
-        background-size: 140% 140%, 160% 160%, 220% 220%, 200px 200px;
-        filter: saturate(1) brightness(1);
-    }
-    45% {
-        background-size: 150% 150%, 170% 170%, 235% 235%, 210px 210px;
-        filter: saturate(1.08) brightness(1.02);
-    }
-    100% {
-        background-size: 140% 140%, 160% 160%, 220% 220%, 200px 200px;
-        filter: saturate(1) brightness(1);
-    }
+.canvas-stack canvas {
+    display: block;
 }
 
 .controls {
@@ -399,6 +381,12 @@ h1 {
     border-radius: 18px;
     cursor: pointer;
     font-size: 0.9rem;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    text-align: center;
+    max-width: min(100%, 190px);
     transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
@@ -515,32 +503,81 @@ h1 {
     filter: brightness(1.08);
 }
 
-@keyframes modalBackdropIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes modalCardIn {
-    from {
-        opacity: 0;
-        transform: translateY(-14px) scale(0.98);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
 /* Action Buttons */
 .action-buttons {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+#toggleComedyBtn {
+    border: none;
+}
+
+.commentary-toggle {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    gap: 10px;
+    padding: 9px 14px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 999px;
+    border: 1px solid #0f3fa7;
+    background: #e9f2ff;
+    color: #0f3fa7;
+    font-weight: 700;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.commentary-toggle:hover {
+    background: #dce9ff;
+}
+
+.commentary-toggle .toggle-track {
+    width: 46px;
+    height: 24px;
+    border-radius: 999px;
+    background: #2f71ff;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.commentary-toggle .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 23px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transition: left 0.2s ease;
+}
+
+.commentary-toggle .toggle-text {
+    line-height: 1;
+    font-size: 0.93rem;
+}
+
+#toggleComedyBtn.off {
+    background: #f2f4f7;
+    color: #475467;
+    border-color: #d0d5dd;
+}
+
+#toggleComedyBtn.off .toggle-track {
+    background: #98a2b3;
+}
+
+#toggleComedyBtn.off .toggle-knob {
+    left: 3px;
+}
+
+#toggleComedyBtn.off:hover {
+    background: #e8eaef;
 }
 
 button {
@@ -570,6 +607,125 @@ button:hover {
 p {
     margin: 10px 0;
     font-size: 0.9rem;
+}
+
+.commentary-stage {
+    position: relative;
+    width: min(100%, 800px);
+    min-height: 74px;
+    margin-top: 10px;
+    overflow: visible;
+}
+
+.commentary-bubble {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 2px solid #252525;
+    background: linear-gradient(130deg, #fffef5 0%, #fff4dd 100%);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+    color: #3b2507;
+    font-weight: 700;
+    opacity: 0.25;
+    transform: translateY(2px) scale(0.98);
+    transition: opacity 0.25s ease;
+}
+
+.commentary-stage.active .commentary-bubble {
+    opacity: 1;
+    animation: bubblePop 0.38s ease;
+}
+
+.commentary-stage.tool-punch.active .commentary-bubble {
+    animation: bubblePop 0.38s ease, punchPulse 0.3s ease;
+}
+
+.commentary-stage.tool-slap.active .commentary-bubble {
+    animation: bubblePop 0.38s ease, slapWobble 0.5s ease;
+}
+
+.commentary-stage.tool-hammer.active .commentary-bubble {
+    animation: bubblePop 0.38s ease, hammerThud 0.32s ease;
+}
+
+.commentary-bubble.hit {
+    background: linear-gradient(130deg, #fff2e4 0%, #ffe1c9 100%);
+    border-color: #7f2d0b;
+    color: #5a2000;
+}
+
+.commentary-bubble.miss {
+    background: linear-gradient(130deg, #eef5ff 0%, #e2edff 100%);
+    border-color: #1849a9;
+    color: #0f326f;
+}
+
+.commentary-bubble.combo {
+    background: linear-gradient(130deg, #fff0ec 0%, #ffd6cd 100%);
+    border-color: #b42318;
+    color: #7a271a;
+}
+
+.commentary-message-caret {
+    display: inline-block;
+    width: 1px;
+    margin-left: 1px;
+    background: currentColor;
+    height: 0.95em;
+    vertical-align: text-bottom;
+    animation: caretBlink 0.8s steps(1) infinite;
+}
+
+.commentary-icons {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.commentary-icon {
+    position: absolute;
+    top: 40px;
+    font-size: clamp(17px, 2vw, 25px);
+    opacity: 0;
+    animation: iconBurst var(--dur, 1200ms) ease-out forwards;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+}
+
+@keyframes bubblePop {
+    0% {
+        transform: translateY(8px) scale(0.94);
+    }
+    50% {
+        transform: translateY(-2px) scale(1.02);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes iconBurst {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 6px, 0) rotate(0deg) scale(0.8);
+    }
+    12% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(var(--driftX, 0px), var(--riseY, -70px), 0) rotate(var(--spin, 0deg)) scale(var(--endScale, 1.2));
+    }
+}
+
+@keyframes caretBlink {
+    0%, 45% {
+        opacity: 1;
+    }
+    46%, 100% {
+        opacity: 0;
+    }
 }
 
 /* Mobile responsive */
@@ -602,6 +758,48 @@ p {
     
     p {
         font-size: 1rem;
+    }
+}
+
+@keyframes punchPulse {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(0) scale(1.03);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes slapWobble {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(0) rotate(-1.8deg);
+    }
+    50% {
+        transform: translateY(0) rotate(1.8deg);
+    }
+    75% {
+        transform: translateY(0) rotate(-0.8deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes hammerThud {
+    0% {
+        transform: translateY(-4px) scale(1);
+    }
+    40% {
+        transform: translateY(2px) scale(1.02, 0.98);
+    }
+    100% {
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -676,12 +874,32 @@ p {
 
 @keyframes arenaPhotoPan {
     0% {
-        background-position: 0% 0%, 0% 0%, center top;
+        background-position: 0% 0%, 0% 0%, center;
     }
     50% {
-        background-position: 8% 6%, 0% 0%, center 10%;
+        background-position: 8% 6%, 0% 0%, center;
     }
     100% {
-        background-position: 0% 0%, 0% 0%, center top;
+        background-position: 0% 0%, 0% 0%, center;
+    }
+}
+
+@keyframes modalBackdropIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(-14px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }

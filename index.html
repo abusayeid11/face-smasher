@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FACE SMASHER</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="game-container">
         <div class="main-content">
@@ -30,7 +32,7 @@
                     </div>
 
                     <div id="arenaSection" class="arena-section hidden">
-                        <span class="tool-label">Choose the place to smash at</span>
+                        <span class="tool-label">Choose place to smash at</span>
                         <div id="arenaButtons" class="arena-buttons"></div>
                         <div class="arena-upload">
                             <label for="arenaPhotoUpload" class="upload-btn">ADD PLACE</label>
@@ -38,26 +40,40 @@
                             <span id="arenaPhotoName">Smash at your place!</span>
                         </div>
                     </div>
+                    <button id="toggleComedyBtn" class="commentary-toggle" type="button" role="switch" aria-checked="false">
+                        <span class="toggle-track" aria-hidden="true">
+                            <span class="toggle-knob"></span>
+                        </span>
+                        <span id="toggleComedyText" class="toggle-text">Commentary is off</span>
+                    </button>
 
                     <button id="startGameBtn" class="start-btn">Start Smashing</button>
+
                 </div>
             </div>
-            
+
             <div id="gameplayArea" class="gameplay-area hidden">
-                        <h1>FACE SMASHER</h1>
+                <h1>FACE SMASHER</h1>
 
                 <div class="controls">
                     <span id="scoreLabel">Smashed: 0</span>
-                    
+
                     <div class="action-buttons">
                         <button id="resetScoreBtn">Reset Score</button>
                         <button id="resetSpeedBtn">Normal Speed</button>
                     </div>
                 </div>
 
-                <canvas id="gameCanvas" width="800" height="600"></canvas>
-                
-                <p id="instructions">Ready to smash!</p>
+                <div class="canvas-stack">
+                    <canvas id="gameCanvas" width="800" height="600"></canvas>
+                </div>
+
+                <div id="commentaryStage" class="commentary-stage" aria-live="polite" aria-atomic="true">
+                    <div id="commentaryBubble" class="commentary-bubble">
+                        <span id="commentaryMessage">Ready for chaos.</span>
+                    </div>
+                    <div id="commentaryIcons" class="commentary-icons" aria-hidden="true"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,4 +93,5 @@
 
     <script type="module" src="script.js"></script>
 </body>
+
 </html>

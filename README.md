@@ -4,17 +4,24 @@ A customizable face smasher game where users upload their own image and choose a
 
 ## Features
 - Upload any image as the smash target
-- Choose from 3 tools (Fist, Hammer, Glove)
+- Choose from 3 tools (Punch, Slap, Hammer)
 - Realistic bruise effects with multiple layers
 - Screen shake on hit
 - Sound effects
+- Commentary toggle (default ON) with switch-style UI
+- Animated commentary bubble with typewriter effect
+- Timed floating emoji bursts for hit, miss, and combo events
+- Tool-wise commentary animations (Punch/Slap/Hammer each feels different)
+- Tool-wise savage commentary lines with combo tiers
+- Fully modular commentary system for easy future extension
 - Mobile responsive with touch support
 
 ## How to Play
 1. Open `index.html` in a browser
 2. Click "Upload Face" to select an image
-3. Pick your tool (Fist, Hammer, or Glove)
+3. Pick your tool (Punch, Slap, or Hammer)
 4. Click/tap on the face to smash it!
+5. After game starts, use the Commentary toggle to turn commentary ON/OFF
 
 ## Running Locally
 Simply open `index.html` in any modern browser. No server required!
@@ -43,7 +50,10 @@ face-smasher/
 │   ├── tool.js         # Tool loading & switching
 │   ├── marks.js        # Bruise generation
 │   ├── input.js        # Mouse/touch input
-│   └── game.js         # Main game loop
+│   ├── game.js         # Main game loop
+│   ├── commentary/      # Commentary feature
+│   │   ├── commentary.js   # Animated commentary engine (hit/miss/combo + tool profiles)
+│   │   └── commentaryText.js # Tool-wise commentary text and combo message builders
 └── tools/              # Tool images
 ```
 
@@ -53,6 +63,13 @@ face-smasher/
 3. Make your changes
 4. Test locally
 5. Submit a pull request
+
+## Git Hooks (Branch Protection)
+This project uses Husky hooks to protect the `main` branch:
+- Direct commits to `main` are blocked (`.husky/pre-commit`)
+- Direct pushes to `main` are blocked (`.husky/pre-push`)
+
+Work on a feature branch and open a pull request to merge into `main`.
 
 ## License
 MIT
