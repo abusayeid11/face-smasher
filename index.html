@@ -30,6 +30,16 @@
                             <button class="tool-btn" data-tool="hammer">🔨 Hammer</button>
                         </div>
                     </div>
+
+                    <div id="arenaSection" class="arena-section hidden">
+                        <span class="tool-label">Choose place to smash at</span>
+                        <div id="arenaButtons" class="arena-buttons"></div>
+                        <div class="arena-upload">
+                            <label for="arenaPhotoUpload" class="upload-btn">ADD PLACE</label>
+                            <input type="file" id="arenaPhotoUpload" accept="image/*">
+                            <span id="arenaPhotoName">Smash at your place!</span>
+                        </div>
+                    </div>
                     <button id="toggleComedyBtn" class="commentary-toggle" type="button" role="switch" aria-checked="false">
                         <span class="toggle-track" aria-hidden="true">
                             <span class="toggle-knob"></span>
@@ -65,6 +75,19 @@
                     </div>
                     <div id="commentaryIcons" class="commentary-icons" aria-hidden="true"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="arenaNameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="arenaNameTitle">
+        <div class="modal-card">
+            <h3 id="arenaNameTitle">Name Your Arena</h3>
+            <p class="modal-help">Give this photo arena a name so you can pick it later.</p>
+            <input id="arenaNameInput" class="modal-input" type="text" placeholder="Arena name" maxlength="40">
+            <p id="arenaNameError" class="modal-error hidden">Name is required.</p>
+            <div class="modal-actions">
+                <button id="arenaNameCancel" type="button" class="modal-cancel">Cancel</button>
+                <button id="arenaNameSave" type="button" class="modal-save">Save</button>
             </div>
         </div>
     </div>

@@ -182,6 +182,68 @@ h1 {
     user-select: none;
 }
 
+#gameCanvas.arena-blast {
+    background-color: #ffe7c3;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 45%),
+        radial-gradient(circle at 75% 25%, rgba(255, 206, 103, 0.8), rgba(255, 206, 103, 0) 55%),
+        repeating-linear-gradient(120deg, rgba(255, 122, 90, 0.35) 0, rgba(255, 122, 90, 0.35) 10px, rgba(255, 198, 87, 0.25) 10px, rgba(255, 198, 87, 0.25) 20px);
+    background-size: 140% 140%, 180% 180%, 260% 260%;
+    animation: arenaBlast 10s ease-in-out infinite;
+}
+
+#gameCanvas.arena-candy {
+    background-color: #fff1f7;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 50%),
+        radial-gradient(circle at 80% 40%, rgba(255, 196, 220, 0.8), rgba(255, 196, 220, 0) 55%),
+        repeating-linear-gradient(45deg, rgba(255, 157, 178, 0.3) 0, rgba(255, 157, 178, 0.3) 12px, rgba(255, 233, 240, 0.4) 12px, rgba(255, 233, 240, 0.4) 24px);
+    background-size: 150% 150%, 180% 180%, 240% 240%;
+    animation: arenaCandy 9s ease-in-out infinite;
+}
+
+#gameCanvas.arena-neon {
+    background-color: #101018;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.35), rgba(0, 255, 255, 0) 45%),
+        radial-gradient(circle at 80% 40%, rgba(255, 0, 153, 0.35), rgba(255, 0, 153, 0) 55%),
+        repeating-linear-gradient(135deg, rgba(0, 255, 200, 0.2) 0, rgba(0, 255, 200, 0.2) 10px, rgba(255, 0, 153, 0.2) 10px, rgba(255, 0, 153, 0.2) 20px);
+    background-size: 160% 160%, 200% 200%, 260% 260%;
+    animation: arenaNeon 8s linear infinite;
+}
+
+#gameCanvas.arena-cool {
+    background-color: #e8f6ff;
+    background-image:
+        radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 50%),
+        radial-gradient(circle at 85% 20%, rgba(155, 215, 255, 0.7), rgba(155, 215, 255, 0) 55%),
+        repeating-linear-gradient(120deg, rgba(120, 190, 255, 0.25) 0, rgba(120, 190, 255, 0.25) 14px, rgba(200, 238, 255, 0.35) 14px, rgba(200, 238, 255, 0.35) 28px);
+    background-size: 150% 150%, 190% 190%, 250% 250%;
+    animation: arenaCool 12s ease-in-out infinite;
+}
+
+#gameCanvas.arena-comet {
+    background-color: #fff4d1;
+    background-image:
+        radial-gradient(circle at 15% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 45%),
+        radial-gradient(circle at 70% 20%, rgba(255, 214, 128, 0.8), rgba(255, 214, 128, 0) 55%),
+        repeating-linear-gradient(60deg, rgba(255, 140, 80, 0.3) 0, rgba(255, 140, 80, 0.3) 10px, rgba(255, 214, 128, 0.25) 10px, rgba(255, 214, 128, 0.25) 20px);
+    background-size: 150% 150%, 190% 190%, 260% 260%;
+    animation: arenaComet 7s ease-in-out infinite;
+}
+
+#gameCanvas.arena-photo {
+    background-color: #111;
+    background-image:
+        radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 55%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.15)),
+        var(--arena-photo, linear-gradient(135deg, #444, #111));
+    background-size: 160% 160%, 100% 100%, contain;
+    background-position: 0% 0%, 0% 0%, center;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    animation: arenaPhotoPan 12s ease-in-out infinite;
+}
+
 .canvas-stack {
     position: relative;
     display: inline-block;
@@ -501,6 +563,164 @@ h1 {
     border-color: #cc0000;
 }
 
+.arena-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.arena-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.arena-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#arenaPhotoUpload {
+    display: none;
+}
+
+#arenaPhotoName {
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+.arena-btn {
+    padding: 8px 14px;
+    background: #fff8e5;
+    color: #222;
+    border: 2px solid #333;
+    border-radius: 18px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.arena-btn:hover {
+    transform: translateY(-1px) scale(1.02);
+    background: #ffe4a6;
+}
+
+.arena-btn.selected {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(140deg, rgba(10, 17, 40, 0.6), rgba(59, 17, 17, 0.45));
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 50;
+    animation: modalBackdropIn 0.22s ease-out;
+}
+
+.modal-card {
+    width: min(92vw, 420px);
+    background: linear-gradient(160deg, #fffaf0, #fff);
+    border: 3px solid #1b1b1b;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.32), 0 0 0 4px rgba(255, 255, 255, 0.45) inset;
+    transform-origin: top center;
+    animation: modalCardIn 0.24s ease-out;
+}
+
+.modal-card h3 {
+    margin: 0;
+    color: #111;
+    font-size: 1.35rem;
+    letter-spacing: 0.2px;
+}
+
+.modal-help {
+    margin: 2px 0 4px;
+    color: #454545;
+    font-size: 0.95rem;
+}
+
+.modal-input {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 2px solid #303030;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #fff;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #cc0000;
+    box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.2);
+}
+
+.modal-error {
+    margin: 0;
+    color: #cc0000;
+    font-size: 0.82rem;
+    font-weight: bold;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    border: 2px solid transparent;
+    transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+.modal-actions button:hover {
+    transform: translateY(-1px);
+}
+
+.modal-cancel {
+    background: #f2f2f2;
+    color: #111;
+    border-color: #b4b4b4;
+}
+
+.modal-cancel:hover {
+    background: #e8e8e8;
+}
+
+.modal-save {
+    background: linear-gradient(135deg, #d80000, #a40000);
+    color: #fff;
+}
+
+.modal-save:hover {
+    filter: brightness(1.08);
+}
+
 /* Action Buttons */
 .action-buttons {
     display: flex;
@@ -797,6 +1017,107 @@ p {
         transform: translateY(2px) scale(1.02, 0.98);
     }
     100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes arenaBlast {
+    0% {
+        background-position: 0% 0%, 100% 10%, 0% 100%;
+        filter: saturate(1) brightness(1);
+    }
+    50% {
+        background-position: 8% 12%, 85% 0%, 15% 85%;
+        filter: saturate(1.1) brightness(1.03);
+    }
+    100% {
+        background-position: 0% 0%, 100% 10%, 0% 100%;
+        filter: saturate(1) brightness(1);
+    }
+}
+
+@keyframes arenaCandy {
+    0% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+        filter: hue-rotate(0deg);
+    }
+    50% {
+        background-position: -8% 6%, 92% 10%, 12% 80%;
+        filter: hue-rotate(-8deg);
+    }
+    100% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+        filter: hue-rotate(0deg);
+    }
+}
+
+@keyframes arenaNeon {
+    0% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+        filter: brightness(1) saturate(1.2);
+    }
+    50% {
+        background-position: 12% -6%, 80% 12%, 18% 82%;
+        filter: brightness(1.15) saturate(1.3);
+    }
+    100% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+        filter: brightness(1) saturate(1.2);
+    }
+}
+
+@keyframes arenaCool {
+    0% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+    }
+    50% {
+        background-position: -6% 10%, 88% 8%, 10% 92%;
+    }
+    100% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+    }
+}
+
+@keyframes arenaComet {
+    0% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+    }
+    50% {
+        background-position: 12% 6%, 80% -4%, 20% 85%;
+    }
+    100% {
+        background-position: 0% 0%, 100% 0%, 0% 100%;
+    }
+}
+
+@keyframes arenaPhotoPan {
+    0% {
+        background-position: 0% 0%, 0% 0%, center;
+    }
+    50% {
+        background-position: 8% 6%, 0% 0%, center;
+    }
+    100% {
+        background-position: 0% 0%, 0% 0%, center;
+    }
+}
+
+@keyframes modalBackdropIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(-14px) scale(0.98);
+    }
+    to {
+        opacity: 1;
         transform: translateY(0) scale(1);
     }
 }
