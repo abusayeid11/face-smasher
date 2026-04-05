@@ -42,6 +42,16 @@ function loadFaceFromFile(file, fileName, instructions, resetCallback, startTime
     reader.readAsDataURL(file);
 }
 
+function loadFaceFromUrl(url, instructions, resetCallback, startTimerCallback) {
+    applyFaceSource(
+        url,
+        instructions,
+        resetCallback,
+        startTimerCallback,
+        "Ready to smash! Tap to smash the face."
+    );
+}
+
 function loadDefaultFace(instructions, resetCallback, startTimerCallback) {
     const svgFace = `
         <svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
@@ -98,6 +108,7 @@ function clearMarks() {
 export { 
     face,
     loadFaceFromFile,
+    loadFaceFromUrl,
     loadDefaultFace,
     resetFacePosition,
     updateFaceScale,
