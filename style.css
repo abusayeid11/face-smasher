@@ -1190,6 +1190,74 @@ body.creator-page .game-container {
     border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
+.history-thumbs {
+    display: flex;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.history-thumb {
+    object-fit: cover;
+}
+
+.history-thumb-face {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+.history-thumb-bg {
+    display: none;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    flex: 1;
+}
+
+.history-play-link {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #cc0000;
+    text-decoration: none;
+}
+.history-play-link:hover { text-decoration: underline; }
+
+.history-name {
+    font-size: 0.62rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #5d5d5d;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-date {
+    font-size: 0.62rem;
+    color: #aaa;
+}
+
+.history-delete-btn {
+    background: none;
+    color: #ccc;
+    border: none;
+    padding: 2px 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: color 0.15s;
+}
+.history-delete-btn:hover  { color: #cc0000; }
+.history-delete-btn:active { color: #900; }
+
 /* ═══════════════════════════════════════════════════════
    PLAY PAGE  –  full-screen game
 ═══════════════════════════════════════════════════════ */
