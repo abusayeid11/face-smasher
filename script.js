@@ -1,6 +1,3 @@
-// Main entry point - Face Smasher
-
-// Import modules
 import { unlockAudio, playHitSound, playToolSound } from './js/audio.js';
 import { face, loadFaceFromFile, loadDefaultFace, resetFacePosition, updateFaceScale, clearMarks } from './js/face.js';
 import { tool, loadTools, initToolSelector, updateToolScale, getCurrentToolName } from './js/tool.js';
