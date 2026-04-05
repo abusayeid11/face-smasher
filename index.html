@@ -29,6 +29,16 @@
                         </div>
                     </div>
 
+                    <div id="arenaSection" class="arena-section hidden">
+                        <span class="tool-label">Choose the place to smash at</span>
+                        <div id="arenaButtons" class="arena-buttons"></div>
+                        <div class="arena-upload">
+                            <label for="arenaPhotoUpload" class="upload-btn">ADD PLACE</label>
+                            <input type="file" id="arenaPhotoUpload" accept="image/*">
+                            <span id="arenaPhotoName">Smash at your place!</span>
+                        </div>
+                    </div>
+
                     <button id="startGameBtn" class="start-btn">Start Smashing</button>
                 </div>
             </div>
@@ -48,6 +58,19 @@
                 <canvas id="gameCanvas" width="800" height="600"></canvas>
                 
                 <p id="instructions">Ready to smash!</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="arenaNameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="arenaNameTitle">
+        <div class="modal-card">
+            <h3 id="arenaNameTitle">Name Your Arena</h3>
+            <p class="modal-help">Give this photo arena a name so you can pick it later.</p>
+            <input id="arenaNameInput" class="modal-input" type="text" placeholder="Arena name" maxlength="40">
+            <p id="arenaNameError" class="modal-error hidden">Name is required.</p>
+            <div class="modal-actions">
+                <button id="arenaNameCancel" type="button" class="modal-cancel">Cancel</button>
+                <button id="arenaNameSave" type="button" class="modal-save">Save</button>
             </div>
         </div>
     </div>
