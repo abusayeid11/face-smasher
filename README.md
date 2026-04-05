@@ -64,5 +64,12 @@ face-smasher/
 4. Test locally
 5. Submit a pull request
 
+## Git Hooks (Branch Protection)
+This project uses Husky hooks to protect the `main` branch:
+- Direct commits to `main` are blocked (`.husky/pre-commit`)
+- Direct pushes to `main` are blocked (`.husky/pre-push`)
+
+Work on a feature branch and open a pull request to merge into `main`.
+
 ## License
 MIT
