@@ -42,14 +42,20 @@ commentaryToggle?.addEventListener('change', () => {
 canvas.addEventListener('mousedown', () => {
     if (face.loaded) {
         const result = game.handleSmash();
-        if (commentaryEnabled) showCommentaryAt(canvas, result.hit, result.x, result.y);
+        if (commentaryEnabled) {
+            const toolName = document.querySelector('.tool-btn.selected')?.dataset.tool || 'punch';
+            showCommentaryAt(canvas, result.hit, result.x, result.y, toolName);
+        }
     }
 });
 canvas.addEventListener('touchstart', (e) => {
     touchStartHandler(e);
     if (face.loaded) {
         const result = game.handleSmash();
-        if (commentaryEnabled) showCommentaryAt(canvas, result.hit, result.x, result.y);
+        if (commentaryEnabled) {
+            const toolName = document.querySelector('.tool-btn.selected')?.dataset.tool || 'punch';
+            showCommentaryAt(canvas, result.hit, result.x, result.y, toolName);
+        }
     }
 }, { passive: false });
 

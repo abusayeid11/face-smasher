@@ -1,14 +1,35 @@
-const HIT_LINES = [
-    { word: "Crush",       hue: 2,   sat: 96, light: 48 },
-    { word: "Slam",        hue: 10,  sat: 96, light: 50 },
-    { word: "Wreck",       hue: 18,  sat: 94, light: 49 },
-    { word: "Boom",        hue: 28,  sat: 95, light: 52 },
-    { word: "Smash",       hue: 6,   sat: 98, light: 50 },
-    { word: "Impact",      hue: 22,  sat: 92, light: 50 },
-    { word: "Brutal",      hue: 0,   sat: 90, light: 46 },
-    { word: "Destroyed",   hue: 14,  sat: 92, light: 49 },
-    { word: "Flattened",   hue: 34,  sat: 90, light: 52 },
-    { word: "Annihilated", hue: 355, sat: 90, light: 47 }
+// Tool-specific hit commentary
+const PUNCH_HIT = [
+    { word: "Pow",       hue: 2,   sat: 96, light: 48 },
+    { word: "Jab",       hue: 10,  sat: 96, light: 50 },
+    { word: "Pummel",    hue: 18,  sat: 94, light: 49 },
+    { word: "Knuckle",   hue: 6,   sat: 98, light: 50 },
+    { word: "Direct",    hue: 22,  sat: 92, light: 50 },
+    { word: "Clean Hit", hue: 0,   sat: 90, light: 46 },
+    { word: "Wham",      hue: 14,  sat: 92, light: 49 },
+    { word: "Knockout",  hue: 355, sat: 90, light: 47 }
+];
+
+const SLAP_HIT = [
+    { word: "Slap",      hue: 220, sat: 88, light: 50 },
+    { word: "Whack",     hue: 232, sat: 85, light: 52 },
+    { word: "Stung",     hue: 46,  sat: 92, light: 54 },
+    { word: "Smite",     hue: 206, sat: 86, light: 51 },
+    { word: "Snap",      hue: 188, sat: 88, light: 53 },
+    { word: "Crisp",     hue: 262, sat: 84, light: 52 },
+    { word: "Sting",     hue: 248, sat: 86, light: 51 },
+    { word: "Spank",     hue: 210, sat: 89, light: 50 }
+];
+
+const HAMMER_HIT = [
+    { word: "Crush",       hue: 30,  sat: 90, light: 48 },
+    { word: "Smash",       hue: 28,  sat: 95, light: 50 },
+    { word: "Obliterate",  hue: 35,  sat: 92, light: 49 },
+    { word: "Pulverize",   hue: 32,  sat: 94, light: 51 },
+    { word: "Hammer Down", hue: 38,  sat: 88, light: 50 },
+    { word: "Devastate",   hue: 33,  sat: 91, light: 49 },
+    { word: "Flatten",     hue: 36,  sat: 89, light: 52 },
+    { word: "Bludgeon",    hue: 31,  sat: 93, light: 48 }
 ];
 
 const MISS_LINES = [
@@ -23,8 +44,25 @@ const MISS_LINES = [
 
 const ANIM_DURATION = 1650;
 
-export function showCommentaryAt(canvas, hit, canvasX, canvasY) {
-    const lines = hit ? HIT_LINES : MISS_LINES;
+/**
+ * Shows tool-specific commentary feedback on the canvas.
+ * @param {HTMLCanvasElement} canvas
+ * @param {boolean} hit - whether the smash connected
+ * @param {number} canvasX - x position on canvas
+ * @param {number} canvasY - y position on canvas
+ * @param {string} toolName - current tool ('punch', 'slap', 'hammer')
+ */
+export function showCommentaryAt(canvas, hit, canvasX, canvasY, toolName = 'punch') {
+    let lines = MISS_LINES;
+    if (hit) {
+        if (toolName === 'slap') {
+            lines = SLAP_HIT;
+        } else if (toolName === 'hammer') {
+            lines = HAMMER_HIT;
+        } else {
+            lines = PUNCH_HIT;
+        }
+    }
     const { word, hue, sat, light } = lines[Math.floor(Math.random() * lines.length)];
 
     const rect    = canvas.getBoundingClientRect();

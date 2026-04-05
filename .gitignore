@@ -23,7 +23,7 @@ build/
 
 # Misc
 *.log
-.env
 
 # Local config with real secrets (copy config.example.js → config.js)
 js/config.js
+config.bat
