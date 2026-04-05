@@ -150,7 +150,7 @@ function initArenaManager(options) {
             reader.readAsDataURL(file);
         });
     }
-
+console.log("Arena Manager initialized");
     function resetArenaUpload() {
         if (arenaPhotoUpload) {
             arenaPhotoUpload.value = "";
