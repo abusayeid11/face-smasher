@@ -1,11 +1,15 @@
 import { face, loadFaceFromUrl, loadDefaultFace, resetFacePosition, clearMarks } from './face.js';
 import { setupGameEngine } from './components/game-engine.js';
 import { createUploadWidget } from './components/cloudinary-uploader.js';
+import { saveGame } from './firebase.js';
+import { buildShareLinks } from './components/share-links.js';
+import { addToHistory, renderHistory } from './components/game-history.js';
 
 const canvas       = document.getElementById('gameCanvas');
 const scoreEl      = document.getElementById('creatorScore');
 const instructions = document.getElementById('instructions');
 const emptyState   = document.getElementById('canvasEmptyState');
+const smashNameEl = document.getElementById('smashName');
 
 let faceUrl = null;
 let bgUrl   = null;
@@ -113,3 +117,57 @@ loadDefaultFace(
         instructions.textContent = 'Click to smash the face!'; 
     }
 );
+
+// History panel
+document.getElementById('historyToggleBtn')?.addEventListener('click', () =>
+    document.getElementById('historyPanel').classList.toggle('open'));
+document.getElementById('historyCloseBtn')?.addEventListener('click', () =>
+    document.getElementById('historyPanel').classList.remove('open'));
+
+// Generate link
+document.getElementById('generateBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('generateBtn');
+    
+    if (!faceUrl) {
+        alert('Please upload a face photo first.');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    
+    try {
+        const name = smashNameEl?.value.trim() || '';
+        const id = await saveGame(faceUrl, bgUrl || '', name);
+        const url = `${window.location.href.replace(/\/[^/]*$/, '/')}play.html?g=${id}`;
+        
+        document.getElementById('gameLink').value = url;
+        document.getElementById('playLink').href = url;
+        
+        buildShareLinks({
+            url,
+            waEl: document.getElementById('shareWa'),
+            twEl: document.getElementById('shareTw'),
+            fbEl: document.getElementById('shareFb'),
+        });
+        
+        document.getElementById('linkBox').classList.remove('hidden');
+        btn.textContent = '🔗 Regenerate Link';
+        
+        addToHistory(id, url, faceUrl, bgUrl, name);
+        renderHistory();
+    } catch (err) {
+        console.error(err);
+        btn.textContent = 'Error – try again';
+        btn.disabled = false;
+    }
+});
+
+document.getElementById('copyBtn')?.addEventListener('click', () => {
+    const linkInput = document.getElementById('gameLink');
+    navigator.clipboard.writeText(linkInput.value).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+    });
+});
