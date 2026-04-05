@@ -12,7 +12,7 @@ function buildFolderArenas(fileNames = FOLDER_ARENA_FILES) {
 		id: `folder-${fileName.replace(/\.[^/.]+$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
 		label: toLabel(fileName),
 		className: "arena-photo",
-		photoUrl: `./gamePlayArea/arenas/${encodeURIComponent(fileName)}`
+		photoUrl: `./arenas/${encodeURIComponent(fileName)}`
 	}));
 }
 
