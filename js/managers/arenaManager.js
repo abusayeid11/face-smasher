@@ -1,7 +1,8 @@
+import { buildGameplayAreas } from '../arena/arena.js';
+
 function initArenaManager(options) {
     const {
         canvas,
-        gameplayAreas,
         arenaButtons,
         arenaPhotoUpload,
         arenaPhotoName,
@@ -17,6 +18,7 @@ function initArenaManager(options) {
     let pendingArenaDataUrl = "";
     let pendingArenaCanPersist = true;
     const arenaStorageKey = "faceSmasherArenaPhotos";
+    const gameplayAreas = buildGameplayAreas();
 
     function applyArenaClass(className) {
         if (currentArenaClass) {

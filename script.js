@@ -15,7 +15,6 @@ import { createGameSessionManager } from './js/managers/gameSessionManager.js';
 import { initInputManager } from './js/managers/inputManager.js';
 import { initControlManager } from './js/managers/controlManager.js';
 import { initRuntimeManager } from './js/managers/runtimeManager.js';
-import gameplayAreas from './gamePlayArea/areas.js';
 
 // Get DOM elements
 const canvas = document.getElementById("gameCanvas");
@@ -102,7 +101,6 @@ gameSessionManager.init();
 commentaryManager.init();
 initArenaManager({
     canvas,
-    gameplayAreas,
     arenaButtons,
     arenaPhotoUpload,
     arenaPhotoName,
