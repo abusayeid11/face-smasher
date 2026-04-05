@@ -64,6 +64,65 @@ function initArenaManager(options) {
         return [...gameplayAreas, ...getSavedArenas()];
     }
 
+    function estimateDataUrlBytes(dataUrl) {
+        if (typeof dataUrl !== "string") return 0;
+        const commaIndex = dataUrl.indexOf(",");
+        if (commaIndex < 0) return dataUrl.length;
+        const base64 = dataUrl.slice(commaIndex + 1);
+        const padding = base64.endsWith("==") ? 2 : (base64.endsWith("=") ? 1 : 0);
+        return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
+    }
+
+    function loadImage(dataUrl) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("Image decode failed"));
+            img.src = dataUrl;
+        });
+    }
+
+    async function optimizeForStorage(dataUrl) {
+        const initialBytes = estimateDataUrlBytes(dataUrl);
+        if (initialBytes > 0 && initialBytes <= 420000) {
+            return dataUrl;
+        }
+
+        const img = await loadImage(dataUrl);
+        const maxSide = 1280;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+
+        const canvasEl = document.createElement("canvas");
+        canvasEl.width = width;
+        canvasEl.height = height;
+        const c2d = canvasEl.getContext("2d");
+        if (!c2d) {
+            return dataUrl;
+        }
+
+        c2d.drawImage(img, 0, 0, width, height);
+
+        const qualitySteps = [0.86, 0.8, 0.74, 0.68, 0.62, 0.56];
+        let bestDataUrl = dataUrl;
+        let bestSize = initialBytes || Number.MAX_SAFE_INTEGER;
+
+        for (const quality of qualitySteps) {
+            const jpegData = canvasEl.toDataURL("image/jpeg", quality);
+            const jpegSize = estimateDataUrlBytes(jpegData);
+            if (jpegSize > 0 && jpegSize < bestSize) {
+                bestDataUrl = jpegData;
+                bestSize = jpegSize;
+            }
+            if (jpegSize > 0 && jpegSize <= 420000) {
+                return jpegData;
+            }
+        }
+
+        return bestDataUrl;
+    }
+
     function readImageToDataUrl(file) {
         return new Promise((resolve, reject) => {
             if (!file.type || !file.type.startsWith("image/")) {
@@ -72,7 +131,14 @@ function initArenaManager(options) {
             }
 
             const reader = new FileReader();
-            reader.onload = () => resolve({ dataUrl: reader.result, canPersist: true });
+            reader.onload = async () => {
+                try {
+                    const optimized = await optimizeForStorage(reader.result);
+                    resolve({ dataUrl: optimized, canPersist: true });
+                } catch (error) {
+                    resolve({ dataUrl: reader.result, canPersist: true });
+                }
+            };
             reader.onerror = () => {
                 try {
                     const tempUrl = URL.createObjectURL(file);
@@ -128,7 +194,7 @@ function initArenaManager(options) {
 
         const saved = getSavedArenas();
         const newArena = {
-            id: `photo-${Date.now()}`,
+            id: `photo-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
             label: arenaLabel,
             className: "arena-photo",
             photoUrl: pendingArenaDataUrl
