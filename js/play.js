@@ -26,7 +26,8 @@ const playState = createPlayState({
 // Shared smash behavior for mouse/touch to avoid repeated logic.
 function handleSmashWithCommentary() {
     const result = game.handleSmash();
-    showCommentaryAt(canvas, result.hit, result.x, result.y);
+    const toolName = document.querySelector('.tool-btn.selected')?.dataset.tool || 'punch';
+    showCommentaryAt(canvas, result.hit, result.x, result.y, toolName);
 }
 
 canvas.addEventListener('mousedown', handleSmashWithCommentary);
