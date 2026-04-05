@@ -2,7 +2,7 @@
 
 // Import modules
 import { unlockAudio, playHitSound, playToolSound } from './js/audio.js';
-import { face, loadFaceFromFile, loadDefaultFace, resetFacePosition, updateFaceScale, clearMarks } from './js/face.js';
+import { face, loadFaceFromFile, loadFaceFromUrl, loadDefaultFace, resetFacePosition, updateFaceScale, clearMarks } from './js/face.js';
 import { tool, loadTools, initToolSelector, updateToolScale, getCurrentToolName } from './js/tool.js';
 import { createMark, drawMark } from './js/marks.js';
 import { setupMouseInput, setupTouchInput, getMousePosition } from './js/input.js';
@@ -336,6 +336,25 @@ setupImageUpload.addEventListener('change', (e) => {
         );
     }
 });
+
+// Auto-start with face URL from upload page redirect
+const urlParams = new URLSearchParams(window.location.search);
+const faceUrlParam = urlParams.get('faceUrl');
+if (faceUrlParam) {
+    unlockAudio();
+    loadFaceFromUrl(
+        faceUrlParam,
+        instructions,
+        () => resetFacePosition(canvas),
+        () => {
+            startGameTimer();
+            gameStarted = true;
+            setupOverlay.classList.add('hidden');
+            gameplayArea.classList.remove('hidden');
+            if (arenaSection) arenaSection.classList.remove('hidden');
+        }
+    );
+}
 
 startGameBtn.addEventListener('click', () => {
     unlockAudio();

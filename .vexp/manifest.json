@@ -1,0 +1,25 @@
+{
+  "file_hashes": {
+    ".claude/hooks/vexp-guard.sh": "1c4253ea6a0cc7ef65e952a67146b91a7d8b0a42f027e279d1a9f6c579e14614",
+    "gamePlayArea/areas.js": "a7a9db1240b1c4e3b15a4661529aacb9ac52b178d5e50320b10eaab5e036589a",
+    "js/audio.js": "b0f4de49c3bcc38b0d5431cc3b75dfcc10353565d050cc0b0dac8034ecfac87d",
+    "js/creator.js": "41bbc3c96c84181341d02201f5cc5e1e7c8c087bbef870c95260bd2d9dfcd1d1",
+    "js/face.js": "023da180894c8798d5c8785ef2393cc9cb0b88c8a7c65ad3b14a47fcdce59918",
+    "js/firebase.js": "ba380e73a179c770531d6083e00f0def828f10256bbfbb7cf0f9dad09282ea68",
+    "js/game.js": "3bad5dec416dc77d0630251fc1af7627bc2948429667933f658695a28124feeb",
+    "js/input.js": "5ade3697b9203fdc328fe7c7b92c4c72e15f381f4ee5d383e757cc02614de5b9",
+    "js/marks.js": "0e05859cdbf9aff6d22772e55a4619730e27d7990610377cd8a56231a7bcff11",
+    "js/play.js": "46e695e3b4d021cce5691bb57e236cffe68e5d66aba5e022ce381a2910d4f0dd",
+    "js/tool.js": "f2fcf9eee945caaf32ff15d3c09bb802ef2c57906f54a3e27299860295254488",
+    "script.js": "3c5196de06c7528acfc2c51c6a5513f81865369bb8c3f5145b4dac748cb6347d"
+  },
+  "indexed_at_commit": "58819cd4c19231593290d8c390b0304da7effd92",
+  "indexed_at_timestamp": "2026-04-05T11:04:35.135402228+00:00",
+  "schema_version": 3,
+  "stats": {
+    "total_edges": 64,
+    "total_files": 12,
+    "total_nodes": 60
+  },
+  "vexp_version": "1.2.30"
+}

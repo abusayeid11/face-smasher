@@ -89,15 +89,15 @@ function initGame(canvas, ctx, scoreLabel, options) {
     function handleSmash() {
         triggerSmashAnim();
         const pos = getMousePos();
-        
+
         if (face.ready && face.loaded) {
             if (pos.x >= face.x && pos.x <= face.x + face.size &&
                 pos.y >= face.y && pos.y <= face.y + face.size) {
-                
+
                 score++;
                 scoreLabel.innerHTML = `Smashed: ${score}`;
                 if (hopInterval > 300) hopInterval -= 100;
-                
+
                 screenShake = 15;
                 if (typeof playToolSound === 'function') {
                     const toolName = typeof getToolName === 'function' ? getToolName() : 'punch';
@@ -105,17 +105,20 @@ function initGame(canvas, ctx, scoreLabel, options) {
                 } else if (typeof playHitSound === 'function') {
                     playHitSound();
                 }
-                
+
                 const relX = pos.x - face.x;
                 const relY = pos.y - face.y;
-                
+
                 const newMarks = createMark(getToolName(), relX, relY);
                 face.marks.push(...newMarks);
-                
+
                 resetFacePos();
                 startTimer();
+                // Dynamic hit position — returned to UI for visual feedback
+                return { hit: true, x: pos.x, y: pos.y };
             }
         }
+        return { hit: false, x: pos.x, y: pos.y };
     }
     
     function resetScore(label) {

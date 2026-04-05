@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Face – Face Smasher</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a2e;
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+        }
+
+        .card {
+            background: #16213e;
+            border-radius: 16px;
+            padding: 48px 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #e94560;
+            letter-spacing: 2px;
+        }
+
+        p {
+            color: #a0a0b0;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        #upload-btn {
+            display: inline-block;
+            background: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 1px;
+        }
+
+        #upload-btn:hover { background: #c73652; }
+        #upload-btn:active { transform: scale(0.97); }
+
+        #status {
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: #a0a0b0;
+            min-height: 24px;
+        }
+
+        #preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        #preview img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e94560;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>FACE SMASHER</h1>
+        <p>Upload a face photo to Cloudinary, then smash it!</p>
+
+        <button id="upload-btn">Upload Face</button>
+
+        <div id="preview">
+            <img id="preview-img" src="" alt="Uploaded face preview">
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <script type="module">
+        import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from './js/config.js';
+        const cloudName = CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = CLOUDINARY_UPLOAD_PRESET;
+
+        const widget = cloudinary.createUploadWidget(
+            {
+                cloudName: cloudName,
+                uploadPreset: uploadPreset,
+                sources: ["local", "camera"],
+                multiple: false,
+                maxImageFileSize: 5000000,
+                cropping: true,
+                croppingAspectRatio: 1,
+                showPoweredBy: false,
+            },
+            (error, result) => {
+                if (error) {
+                    document.getElementById("status").textContent = "Upload failed. Please try again.";
+                    return;
+                }
+
+                if (result && result.event === "success") {
+                    const url = result.info.secure_url;
+
+                    document.getElementById("status").textContent = "Uploaded! Redirecting to game...";
+                    document.getElementById("preview-img").src = url;
+                    document.getElementById("preview").style.display = "block";
+
+                    setTimeout(() => {
+                        window.location.href = "index.html?faceUrl=" + encodeURIComponent(url);
+                    }, 1200);
+                }
+            }
+        );
+
+        document.getElementById("upload-btn").addEventListener("click", () => {
+            widget.open();
+        });
+    </script>
+</body>
+</html>

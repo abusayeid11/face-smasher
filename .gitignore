@@ -7,6 +7,12 @@ node_modules/
 *.swp
 *.swo
 
+# AI assistant workspace files
+.claude/settings.json
+.claude/hooks/
+.copilot/
+.github/copilot-chat/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -18,3 +24,6 @@ build/
 # Misc
 *.log
 .env
+
+# Local config with real secrets (copy config.example.js → config.js)
+js/config.js

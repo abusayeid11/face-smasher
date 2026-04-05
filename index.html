@@ -2,26 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FACE SMASHER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FACE SMASHER – Create</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="game-container">
-        <div class="main-content">
-            <div id="setupOverlay" class="setup-overlay">
-                <div class="setup-card">
-                    <h2>Setup Your Smash</h2>
-                    <p class="setup-help">Upload a face and pick a tool. Skip both to use defaults.</p>
+<body class="creator-page">
 
+    <div class="game-container">
+        <h1 id="pageTitle">FACE SMASHER</h1>
+        <div class="controls">
+            <span id="creatorScore">Smashed: 0</span>
+            <div class="action-buttons">
+                <button id="creatorReset">Reset Score</button>
+                <button id="creatorResetSpeed">Normal Speed</button>
+            </div>
+        </div>
+        <div class="main-content">
+
+            <!-- ═══ LEFT – Config Panel ═══ -->
+            <div class="setup-overlay">
+                <div class="setup-card">
+                    <h2>Create Your Smash</h2>
+                    <p class="setup-help">Upload a face, optionally add a background, then share your link!</p>
+
+                    <!-- Name -->
                     <div class="upload-section">
-                        <label for="setupImageUpload" class="upload-btn">Upload Face</label>
-                        <input type="file" id="setupImageUpload" accept="image/*">
-                        <span id="setupFileName">No file selected (default face will be used)</span>
+                        <span class="step-label">1. Name (optional)</span>
+                        <input type="text" id="smashName" class="name-input" placeholder="e.g. John" maxlength="40">
                     </div>
 
+                    <!-- Step 1: Face -->
+                    <div class="upload-section">
+                        <span class="step-label">2. Face Photo</span>
+                        <button class="upload-btn" id="uploadFaceBtn">Upload Face</button>
+                        <p class="hint-text" id="faceHint">No face uploaded</p>
+                    </div>
+
+                    <!-- Step 2: Background -->
+                    <div class="upload-section">
+                        <span class="step-label">3. Background (optional)</span>
+                        <button class="upload-btn" id="uploadBgBtn">Upload Background</button>
+                        <p class="hint-text" id="bgHint">No background uploaded (black default)</p>
+                    </div>
+
+                    <!-- Step 3: Tool -->
                     <div class="tool-section">
-                        <span class="tool-label">Choose Tool:</span>
+                        <span class="tool-label">4. Preview Tool:</span>
                         <div class="tool-buttons">
                             <button class="tool-btn selected" data-tool="punch">👊 Punch</button>
                             <button class="tool-btn" data-tool="slap">👋 Slap</button>
@@ -29,52 +55,64 @@
                         </div>
                     </div>
 
-                    <div id="arenaSection" class="arena-section hidden">
-                        <span class="tool-label">Choose the place to smash at</span>
-                        <div id="arenaButtons" class="arena-buttons"></div>
-                        <div class="arena-upload">
-                            <label for="arenaPhotoUpload" class="upload-btn">ADD PLACE</label>
-                            <input type="file" id="arenaPhotoUpload" accept="image/*">
-                            <span id="arenaPhotoName">Smash at your place!</span>
+                    <!-- Commentary toggle -->
+                    <div class="commentary-toggle-row">
+                        <span class="step-label" style="margin:0">Commentary</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="commentaryToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-status" id="commentaryStatus">On</span>
+                    </div>
+
+                    <!-- Generate -->
+                    <button class="start-btn" id="generateBtn" disabled>🔗 Generate Smash Link</button>
+
+                    <!-- Link + Share (revealed after generation) -->
+                    <div id="linkBox" class="creator-link-box hidden">
+                        <div class="creator-link-row">
+                            <input id="gameLink" class="creator-link-input" type="text" readonly>
+                            <button id="copyBtn" class="upload-btn">Copy</button>
                         </div>
-                    </div>
-
-                    <button id="startGameBtn" class="start-btn">Start Smashing</button>
-                </div>
-            </div>
-            
-            <div id="gameplayArea" class="gameplay-area hidden">
-                        <h1>FACE SMASHER</h1>
-
-                <div class="controls">
-                    <span id="scoreLabel">Smashed: 0</span>
-                    
-                    <div class="action-buttons">
-                        <button id="resetScoreBtn">Reset Score</button>
-                        <button id="resetSpeedBtn">Normal Speed</button>
+                        <div class="creator-share-row">
+                            <a class="creator-share-btn cs-wa" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+                            <a class="creator-share-btn cs-tw" id="shareTw" href="#" target="_blank" rel="noopener">X / Twitter</a>
+                            <a class="creator-share-btn cs-fb" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a>
+                        </div>
+                        <a class="creator-play-link" id="playLink" href="#" target="_blank" rel="noopener">▶ Play Now →</a>
                     </div>
                 </div>
-
-                <canvas id="gameCanvas" width="800" height="600"></canvas>
-                
-                <p id="instructions">Ready to smash!</p>
             </div>
+
+            <!-- ═══ RIGHT – Live Game Canvas ═══ -->
+            <div class="gameplay-area">
+                <div class="canvas-container">
+                    <div class="canvas-empty-state" id="canvasEmptyState">
+                        <p class="canvas-empty-icon">👆</p>
+                        <p>Upload a face photo<br>to preview the game</p>
+                    </div>
+                    <canvas id="gameCanvas" width="1200" height="850"></canvas>
+                </div>
+            </div>
+
+            <!-- ═══ RIGHT – Game History ═══ -->
+            <div class="history-panel" id="historyPanel">
+                <div class="history-panel-header">
+                    <h3 class="history-title">Previous Games</h3>
+                    <button class="history-close-btn" id="historyCloseBtn" aria-label="Close">✕</button>
+                </div>
+                <div id="historyList" class="history-list"></div>
+            </div>
+
+            <!-- Mobile toggle button -->
+            <button class="history-toggle-btn" id="historyToggleBtn" aria-label="Previous games">🕐</button>
+
         </div>
+
+        <p id="instructions">Upload a face to get started</p>
     </div>
 
-    <div id="arenaNameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="arenaNameTitle">
-        <div class="modal-card">
-            <h3 id="arenaNameTitle">Name Your Arena</h3>
-            <p class="modal-help">Give this photo arena a name so you can pick it later.</p>
-            <input id="arenaNameInput" class="modal-input" type="text" placeholder="Arena name" maxlength="40">
-            <p id="arenaNameError" class="modal-error hidden">Name is required.</p>
-            <div class="modal-actions">
-                <button id="arenaNameCancel" type="button" class="modal-cancel">Cancel</button>
-                <button id="arenaNameSave" type="button" class="modal-save">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="script.js"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <script type="module" src="js/creator.js"></script>
 </body>
 </html>
