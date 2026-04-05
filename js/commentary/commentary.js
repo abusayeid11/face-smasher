@@ -1,65 +1,41 @@
 // Commentary animation module - reusable hit/miss/combo effects
+import { DEFAULT_MOOD_CONFIGS, TOOL_CONFIGS } from './config.js';
+
+function normalizeToolName(toolName) {
+    const name = String(toolName || "punch").toLowerCase();
+    if (name === "hammer") return "hammer";
+    if (name === "slap" || name === "glove") return "slap";
+    return "punch";
+}
+
+function normalizeMood(mood) {
+    return mood in DEFAULT_MOOD_CONFIGS ? mood : "hit";
+}
+
+function resolveMoodConfig(toolName, mood) {
+    const safeMood = normalizeMood(mood);
+    const safeTool = normalizeToolName(toolName);
+    const toolMood = TOOL_CONFIGS[safeTool]?.[safeMood] || {};
+    return {
+        ...DEFAULT_MOOD_CONFIGS[safeMood],
+        ...toolMood
+    };
+}
 
 function createCommentaryAnimator(elements) {
     const { stage, bubble, message, icons } = elements || {};
 
-    let animToken = 0;
-    let iconBurstTimer = null;
-    let messageTimer = null;
-    let stageResetTimer = null;
-
-    const defaultMoodConfigs = {
-        hit: {
-            icons: ["💥", "😂", "✨", "👊", "🎯"],
-            count: 9,
-            cadenceMs: 110,
-            drift: 80,
-            riseMin: 50,
-            riseMax: 120,
-            spin: 90
-        },
-        miss: {
-            icons: ["😵", "💨", "🙈", "🤡", "😅"],
-            count: 7,
-            cadenceMs: 140,
-            drift: 75,
-            riseMin: 45,
-            riseMax: 100,
-            spin: 70
-        },
-        combo: {
-            icons: ["🔥", "💥", "🤣", "⚡", "🏆", "👊"],
-            count: 12,
-            cadenceMs: 95,
-            drift: 95,
-            riseMin: 65,
-            riseMax: 130,
-            spin: 120
-        }
-    };
-
-    const toolConfigs = {
-        punch: {
-            hit: { icons: ["👊", "💥", "🎯", "😤"], count: 9, cadenceMs: 105, drift: 70, riseMin: 55, riseMax: 110, spin: 75 },
-            miss: { icons: ["👀", "💨", "😅", "🫠"], count: 6, cadenceMs: 150, drift: 68, riseMin: 45, riseMax: 90, spin: 60 },
-            combo: { icons: ["👊", "🔥", "💥", "🏅"], count: 11, cadenceMs: 90, drift: 90, riseMin: 70, riseMax: 140, spin: 105 }
-        },
-        slap: {
-            hit: { icons: ["👋", "✨", "🤣", "🌀"], count: 10, cadenceMs: 100, drift: 100, riseMin: 50, riseMax: 120, spin: 150 },
-            miss: { icons: ["🙈", "🫣", "💨", "😬"], count: 7, cadenceMs: 135, drift: 95, riseMin: 45, riseMax: 105, spin: 120 },
-            combo: { icons: ["👋", "⚡", "✨", "🤣", "🎉"], count: 13, cadenceMs: 85, drift: 120, riseMin: 70, riseMax: 145, spin: 170 }
-        },
-        hammer: {
-            hit: { icons: ["🔨", "💣", "💢", "🧱"], count: 8, cadenceMs: 118, drift: 65, riseMin: 60, riseMax: 130, spin: 65 },
-            miss: { icons: ["🔨", "😵", "💨", "😓"], count: 6, cadenceMs: 145, drift: 60, riseMin: 50, riseMax: 100, spin: 55 },
-            combo: { icons: ["🔨", "💥", "🔥", "🏆", "⚠️"], count: 12, cadenceMs: 92, drift: 85, riseMin: 75, riseMax: 150, spin: 90 }
-        }
+    const state = {
+        animToken: 0,
+        iconBurstTimer: null,
+        messageTimer: null,
+        stageResetTimer: null
     };
 
     function clearTimers() {
-        clearInterval(iconBurstTimer);
-        clearInterval(messageTimer);
-        clearTimeout(stageResetTimer);
+        clearInterval(state.iconBurstTimer);
+        clearInterval(state.messageTimer);
+        clearTimeout(state.stageResetTimer);
     }
 
     function clearIcons() {
@@ -80,31 +56,34 @@ function createCommentaryAnimator(elements) {
         }
     }
 
-    function normalizeTool(toolName) {
-        const name = String(toolName || "punch").toLowerCase();
-        if (name === "hammer") return "hammer";
-        if (name === "slap" || name === "glove") return "slap";
-        return "punch";
-    }
+    function startTypewriter(text, localToken) {
+        const cleanText = String(text || "").trim();
+        let idx = 0;
+        message.innerHTML = '<span class="commentary-message-caret"></span>';
 
-    function resolveMoodConfig(toolName, mood) {
-        const safeMood = mood in defaultMoodConfigs ? mood : "hit";
-        const safeTool = normalizeTool(toolName);
-        const toolMood = toolConfigs[safeTool]?.[safeMood] || {};
-        return {
-            ...defaultMoodConfigs[safeMood],
-            ...toolMood
-        };
+        state.messageTimer = setInterval(() => {
+            if (localToken !== state.animToken) return;
+
+            idx += 2;
+            if (idx >= cleanText.length) {
+                message.textContent = cleanText;
+                clearInterval(state.messageTimer);
+                return;
+            }
+
+            const partial = cleanText.slice(0, idx);
+            message.innerHTML = `${partial}<span class="commentary-message-caret"></span>`;
+        }, 24);
     }
 
     function burstIcons(config) {
         if (!icons) return;
 
         let created = 0;
-        clearInterval(iconBurstTimer);
-        iconBurstTimer = setInterval(() => {
+        clearInterval(state.iconBurstTimer);
+        state.iconBurstTimer = setInterval(() => {
             if (created >= config.count) {
-                clearInterval(iconBurstTimer);
+                clearInterval(state.iconBurstTimer);
                 return;
             }
 
@@ -124,48 +103,35 @@ function createCommentaryAnimator(elements) {
         }, config.cadenceMs);
     }
 
-    function animate(text, mood = "hit", toolName = "punch") {
-        if (!stage || !bubble || !message) return;
-
-        const safeMood = mood in defaultMoodConfigs ? mood : "hit";
-        const normalizedTool = normalizeTool(toolName);
-        const config = resolveMoodConfig(normalizedTool, safeMood);
-        const localToken = ++animToken;
-
+    function resetStageState() {
         clearTimers();
         clearIcons();
         resetMoodClasses();
         resetToolClasses();
+        stage?.classList.remove("active");
+    }
+
+    function animate(text, mood = "hit", toolName = "punch") {
+        if (!stage || !bubble || !message) return;
+
+        const safeMood = normalizeMood(mood);
+        const normalizedTool = normalizeToolName(toolName);
+        const config = resolveMoodConfig(normalizedTool, safeMood);
+        const localToken = ++state.animToken;
+
+        resetStageState();
         stage.classList.add(`tool-${normalizedTool}`);
         bubble.classList.add(safeMood);
-        stage.classList.remove("active");
 
         // Restart entry animation reliably.
         void bubble.offsetWidth;
         stage.classList.add("active");
 
-        const cleanText = String(text || "").trim();
-        let idx = 0;
-        message.innerHTML = '<span class="commentary-message-caret"></span>';
-
-        messageTimer = setInterval(() => {
-            if (localToken !== animToken) return;
-
-            idx += 2;
-            if (idx >= cleanText.length) {
-                message.textContent = cleanText;
-                clearInterval(messageTimer);
-                return;
-            }
-
-            const partial = cleanText.slice(0, idx);
-            message.innerHTML = `${partial}<span class="commentary-message-caret"></span>`;
-        }, 24);
-
+        startTypewriter(text, localToken);
         burstIcons(config);
 
-        stageResetTimer = setTimeout(() => {
-            if (localToken !== animToken) return;
+        state.stageResetTimer = setTimeout(() => {
+            if (localToken !== state.animToken) return;
             stage.classList.remove("active");
         }, 2900);
     }
@@ -173,11 +139,7 @@ function createCommentaryAnimator(elements) {
     function setIdleMessage(text) {
         if (!message) return;
 
-        clearTimers();
-        clearIcons();
-        resetMoodClasses();
-        resetToolClasses();
-        stage?.classList.remove("active");
+        resetStageState();
         message.textContent = text;
     }
 
@@ -188,11 +150,7 @@ function createCommentaryAnimator(elements) {
         showCombo: (text, toolName = "punch") => animate(text, "combo", toolName),
         setIdleMessage,
         clear: () => {
-            clearTimers();
-            clearIcons();
-            resetMoodClasses();
-            resetToolClasses();
-            stage?.classList.remove("active");
+            resetStageState();
         }
     };
 }
