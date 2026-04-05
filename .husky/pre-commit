@@ -1,3 +1,10 @@
-# .husky/pre-commit
-npx --no-install prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown
-git update-index --again
+#!/usr/bin/env sh
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch" = "main" ]; then
+  echo "❌ Direct commits to 'main' are blocked. Create a feature branch and open a PR."
+  exit 1
+fi
+
+exit 0

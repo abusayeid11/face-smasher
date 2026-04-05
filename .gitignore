@@ -17,4 +17,4 @@ build/
 
 # Misc
 *.log
-.env
+config.bat
