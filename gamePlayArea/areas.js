@@ -18,11 +18,7 @@ const folderArenas = folderArenaFiles.map((fileName) => ({
 }));
 
 const gameplayAreas = [
-    {
-        id: "blast",
-        label: "Boom Room",
-        className: "arena-blast"
-    },
+ 
     {
         id: "candy",
         label: "Candy Smash",
@@ -33,21 +29,9 @@ const gameplayAreas = [
         label: "Neon Alley",
         className: "arena-neon"
     },
-    {
-        id: "cool",
-        label: "Chill Zone",
-        className: "arena-cool"
-    },
-    {
-        id: "comet",
-        label: "Comet Crash",
-        className: "arena-comet"
-    },
-    {
-        id: "photo",
-        label: "Photo Arena",
-        className: "arena-photo"
-    },
+  
+
+   
     ...folderArenas
 ];
 
