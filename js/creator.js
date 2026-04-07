@@ -9,6 +9,7 @@ import { setupGameEngine } from "./components/game-engine.js";
 import {
   setupFileInput,
   processAndUploadImages,
+  convertToWebPOnly,
 } from "./components/image-processor.js";
 import { saveGame } from "./firebase.js";
 import { buildShareLinks } from "./components/share-links.js";
@@ -84,16 +85,17 @@ document.getElementById("creatorReset").onclick = () => {
 
 document.getElementById("creatorResetSpeed").onclick = () => game.resetSpeed();
 
-function handleFaceLoaded(dataUrl) {
-  faceUrl = dataUrl;
-  document.getElementById("faceHint").textContent = "✓ Face loaded";
+async function handleFaceLoaded(dataUrl) {
+  const webpUrl = await convertToWebPOnly(dataUrl);
+  faceUrl = webpUrl;
+  document.getElementById("faceHint").textContent = "✓ Face loaded (WebP)";
   const uploadFaceBtn = document.getElementById("uploadFaceBtn");
   if (uploadFaceBtn) uploadFaceBtn.textContent = "Change Photo";
   emptyState.classList.add("hidden");
   clearMarks();
   game.resetScore(scoreEl);
   loadFaceFromUrl(
-    dataUrl,
+    webpUrl,
     instructions,
     () => resetFacePosition(canvas),
     () => {
@@ -103,8 +105,9 @@ function handleFaceLoaded(dataUrl) {
   );
 }
 
-function handleBgLoaded(dataUrl) {
-  setCustomBackground(dataUrl);
+async function handleBgLoaded(dataUrl) {
+  const webpUrl = await convertToWebPOnly(dataUrl);
+  setCustomBackground(webpUrl);
 }
 
 setupFileInput("faceFileInput", "uploadFaceBtn", handleFaceLoaded);
