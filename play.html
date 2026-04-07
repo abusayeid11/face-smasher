@@ -1,93 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FACE SMASHER</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="play-body">
-<div class="play-layout">
-
-    <!-- PAGE HEADER -->
-    <header class="play-header">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="play-body">
+    <div class="play-layout">
+      <!-- PAGE HEADER -->
+      <header class="play-header">
         <div class="play-brand" id="playBrand">👊 FACE SMASHER</div>
         <div class="play-score" id="scoreLabel">Smashed: 0</div>
         <div class="play-header-controls">
-            <button id="resetSpeedBtn" class="play-ctrl-btn">⚡ Reset Speed</button>
-            <button id="resetScoreBtn" class="play-ctrl-btn">🔄 Reset Score</button>
-            <button id="shareBtn" class="play-share-btn">📤 Share</button>
-            <a href="index.html" class="play-create-cta">✨ Create Your Own</a>
+          <button id="resetSpeedBtn" class="play-ctrl-btn">
+            ⚡ Reset Speed
+          </button>
+          <button id="resetScoreBtn" class="play-ctrl-btn">
+            🔄 Reset Score
+          </button>
+          <button id="shareBtn" class="play-share-btn">📤 Share</button>
+          <a href="index.html" class="play-create-cta">✨ Create Your Own</a>
         </div>
 
         <p id="instructions" class="play-instructions">Tap to smash!</p>
-    </header>
+      </header>
 
-    <!-- CANVAS -->
-    <main class="play-canvas-area" id="gameArea">
+      <!-- CANVAS -->
+      <main class="play-canvas-area" id="gameArea">
         <!-- Loading -->
         <div id="loadingScreen" class="play-overlay">
-            <div class="setup-card play-overlay-card">
-                <div class="play-spinner">👊</div>
-                <h2>Loading Game…</h2>
-                <p>Fetching your smash setup</p>
-            </div>
+          <div class="setup-card play-overlay-card">
+            <div class="play-spinner">👊</div>
+            <h2>Loading Game…</h2>
+            <p>Fetching your smash setup</p>
+          </div>
         </div>
 
         <!-- Error -->
         <div id="errorScreen" class="play-overlay hidden">
-            <div class="setup-card play-overlay-card">
-                <p class="play-error-emoji">😕</p>
-                <h2>Game Not Found</h2>
-                <p>This link may be invalid or expired.</p>
-                <a href="index.html" class="start-btn play-error-cta">
-                    Create a New Game
-                </a>
-            </div>
+          <div class="setup-card play-overlay-card">
+            <p class="play-error-emoji">😕</p>
+            <h2>Game Not Found</h2>
+            <p>This link may be invalid or expired.</p>
+            <a href="index.html" class="start-btn play-error-cta">
+              Create a New Game
+            </a>
+          </div>
         </div>
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
 
         <div class="play-canvas-tools">
-            <div class="tool-buttons play-tools">
-                <button class="tool-btn selected" data-tool="punch">
-                    <span class="tool-emoji">👊</span>
-                    <span class="tool-name">Punch</span>
-                </button>
-                <button class="tool-btn" data-tool="slap">
-                    <span class="tool-emoji">👋</span>
-                    <span class="tool-name">Slap</span>
-                </button>
-                <button class="tool-btn" data-tool="hammer">
-                    <span class="tool-emoji">🔨</span>
-                    <span class="tool-name">Hammer</span>
-                </button>
-            </div>
+          <div class="tool-buttons play-tools">
+            <button class="tool-btn selected" data-tool="punch">
+              <span class="tool-emoji">👊</span>
+              <span class="tool-name">Punch</span>
+            </button>
+            <button class="tool-btn" data-tool="slap">
+              <span class="tool-emoji">👋</span>
+              <span class="tool-name">Slap</span>
+            </button>
+            <button class="tool-btn" data-tool="hammer">
+              <span class="tool-emoji">🔨</span>
+              <span class="tool-name">Hammer</span>
+            </button>
+          </div>
         </div>
-    </main>
-</div>
+      </main>
+    </div>
 
-<!-- SHARE MODAL -->
-<div id="shareModal" class="share-modal hidden">
-    <div class="share-modal-backdrop" id="shareBackdrop"></div>
-    <div class="setup-card share-modal-card">
+    <!-- SHARE MODAL -->
+    <div id="shareModal" class="share-modal hidden">
+      <div class="share-modal-backdrop" id="shareBackdrop"></div>
+      <div class="setup-card share-modal-card">
         <h2 class="share-modal-title">Share This Game</h2>
-        <p class="setup-help share-modal-subtitle">Copy the link or share directly:</p>
+        <p class="setup-help share-modal-subtitle">
+          Copy the link or share directly:
+        </p>
 
         <div class="creator-link-row">
-            <input id="shareInput" class="creator-link-input" type="text" readonly>
-            <button id="shareCopyBtn" class="upload-btn">Copy</button>
+          <input
+            id="shareInput"
+            class="creator-link-input"
+            type="text"
+            readonly
+          />
+          <button id="shareCopyBtn" class="upload-btn">Copy</button>
         </div>
 
         <div class="creator-share-row">
-            <a id="shareWa" class="creator-share-btn cs-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
-            <a id="shareTw" class="creator-share-btn cs-tw" href="#" target="_blank" rel="noopener">X / Twitter</a>
-            <a id="shareFb" class="creator-share-btn cs-fb" href="#" target="_blank" rel="noopener">Facebook</a>
+          <a
+            id="shareWa"
+            class="creator-share-btn cs-wa"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            >WhatsApp</a
+          >
+          <a
+            id="shareTw"
+            class="creator-share-btn cs-tw"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            >X / Twitter</a
+          >
+          <a
+            id="shareFb"
+            class="creator-share-btn cs-fb"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            >Facebook</a
+          >
         </div>
 
-        <button id="shareClose" class="upload-btn share-close-btn">✕ Close</button>
+        <button id="shareClose" class="upload-btn share-close-btn">
+          ✕ Close
+        </button>
+      </div>
     </div>
-</div>
 
-<script type="module" src="js/play.js"></script>
-</body>
+    <script type="module" src="js/play.js"></script>
+  </body>
 </html>

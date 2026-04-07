@@ -184,6 +184,12 @@ h1 {
   user-select: none;
 }
 
+/* Canvas in wrapper with custom background should be transparent */
+.canvas-wrapper.arena-photo #gameCanvas {
+  background: transparent;
+  border: none;
+}
+
 #gameCanvas.arena-blast {
   background-color: #ffe7c3;
   background-image:
@@ -332,11 +338,11 @@ h1 {
   background-size:
     160% 160%,
     100% 100%,
-    contain;
+    cover;
   background-position:
     0% 0%,
     0% 0%,
-    center;
+    center top;
   background-repeat: no-repeat, no-repeat, no-repeat;
   animation: arenaPhotoPan 12s ease-in-out infinite;
 }
@@ -1136,19 +1142,19 @@ p {
     background-position:
       0% 0%,
       0% 0%,
-      center;
+      center top;
   }
   50% {
     background-position:
       8% 6%,
       0% 0%,
-      center;
+      center 10%;
   }
   100% {
     background-position:
       0% 0%,
       0% 0%,
-      center;
+      center top;
   }
 }
 
@@ -1282,6 +1288,69 @@ body.creator-page .game-container {
   display: inline-block;
   max-width: 100%;
   width: min(100%, calc(100vw - 340px));
+}
+
+.canvas-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.canvas-wrapper.arena-photo::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  background-color: #111;
+  background-image: var(--arena-photo, linear-gradient(135deg, #444, #111));
+  background-size: cover;
+  background-position: center;
+  animation: bgPan 12s ease-in-out infinite;
+  z-index: -1;
+}
+
+.canvas-wrapper.arena-photo #gameCanvas {
+  background: transparent;
+  border: none;
+}
+
+@keyframes bgPan {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bgPanPos {
+  0% {
+    background-position: 50% 50%;
+  }
+  50% {
+    background-position: 55% 55%;
+  }
+  100% {
+    background-position: 50% 50%;
+  }
+}
+
+@keyframes bgPanPosCanvas {
+  0% {
+    background-size: 110% 110%;
+    background-position: center;
+  }
+  50% {
+    background-size: 115% 115%;
+    background-position: 55% 55%;
+  }
+  100% {
+    background-size: 110% 110%;
+    background-position: center;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1743,13 +1812,14 @@ body.creator-page .game-container {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   padding: clamp(6px, 1.5vw, 10px);
   position: relative;
   background: #ffde59;
 }
 
-.play-canvas-area #gameCanvas {
+.play-canvas-area .canvas-wrapper {
+  position: relative;
+  overflow: hidden;
   max-width: 100%;
   max-height: 100%;
   width: auto;
@@ -1757,6 +1827,26 @@ body.creator-page .game-container {
   border: 10px solid #000;
   border-radius: 12px;
   box-sizing: border-box;
+}
+
+.play-canvas-area .canvas-wrapper.arena-photo::before {
+  display: none;
+}
+
+.play-canvas-area .canvas-wrapper.arena-photo #gameCanvas {
+  background-color: #111;
+  background-image:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(255, 255, 255, 0.15),
+      transparent 50%
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
+    var(--arena-photo);
+  background-size: 110% 110%;
+  background-position: center;
+  animation: bgPanPosCanvas 12s ease-in-out infinite;
+  border: none;
 }
 
 /* Tools overlay at bottom of canvas */
@@ -1994,7 +2084,9 @@ body.creator-page .game-container {
   .play-canvas-area {
     padding: 2px;
   }
-  .play-canvas-area #gameCanvas {
+  .play-canvas-area .canvas-wrapper {
+    position: relative;
+    overflow: hidden;
     height: calc(100dvh - 190px);
     width: auto;
     max-width: 100%;
@@ -2030,7 +2122,9 @@ body.creator-page .game-container {
     font-size: 0.72rem;
     padding: 5px 10px;
   }
-  .play-canvas-area #gameCanvas {
+  .play-canvas-area .canvas-wrapper {
+    position: relative;
+    overflow: hidden;
     height: min(62dvh, 560px);
     max-height: calc(100dvh - 210px);
     width: auto;

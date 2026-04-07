@@ -16,6 +16,7 @@ import { buildShareLinks } from "./components/share-links.js";
 import { addToHistory, renderHistory } from "./components/game-history.js";
 
 const canvas = document.getElementById("gameCanvas");
+const canvasWrapper = document.getElementById("canvasWrapper");
 canvas.width = 1200;
 canvas.height = 850;
 
@@ -30,6 +31,8 @@ let bgUrl = null;
 function setArena(arenaClass, photoUrl = null) {
   canvas.className = "";
   canvas.classList.add(arenaClass);
+  canvasWrapper.className = "canvas-wrapper";
+  canvasWrapper.style.removeProperty("--arena-photo");
   if (photoUrl) {
     canvas.style.setProperty("--arena-photo", `url("${photoUrl}")`);
   } else {
@@ -39,8 +42,8 @@ function setArena(arenaClass, photoUrl = null) {
 
 function setCustomBackground(url) {
   bgUrl = url;
-  canvas.className = "arena-photo";
-  canvas.style.setProperty("--arena-photo", `url("${url}")`);
+  canvasWrapper.className = "canvas-wrapper arena-photo";
+  canvasWrapper.style.setProperty("--arena-photo", `url("${url}")`);
   document.getElementById("bgHint").textContent = "✓ Custom background set";
   document.getElementById("uploadBgBtn").textContent = "Change Photo";
 
@@ -111,7 +114,19 @@ async function handleBgLoaded(dataUrl) {
 }
 
 setupFileInput("faceFileInput", "uploadFaceBtn", handleFaceLoaded);
-setupFileInput("bgFileInput", "uploadBgBtn", handleBgLoaded);
+setupFileInput("bgFileInput", "uploadBgBtn", () => {});
+
+document.getElementById("bgFileInput").addEventListener("change", function () {
+  const file = this.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      await handleBgLoaded(event.target.result);
+      this.value = "";
+    };
+    reader.readAsDataURL(file);
+  }
+});
 
 initArenaButtons();
 
