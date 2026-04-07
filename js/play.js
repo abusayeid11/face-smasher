@@ -1,98 +1,115 @@
-import { face, loadFaceFromUrl, resetFacePosition, clearMarks } from './face.js';
-import { getGame } from './firebase.js';
-import { setupGameEngine } from './components/game-engine.js';
-import { createPlayState } from './components/play-state.js';
-import { setupPlayShareModal } from './components/play-share-modal.js';
+import {
+  face,
+  loadFaceFromUrl,
+  resetFacePosition,
+  clearMarks,
+} from "./face.js";
+import { getGame } from "./firebase.js";
+import { setupGameEngine } from "./components/game-engine.js";
+import { createPlayState } from "./components/play-state.js";
+import { setupPlayShareModal } from "./components/play-share-modal.js";
 
-const canvas = document.getElementById('gameCanvas');
-const scoreLabel = document.getElementById('scoreLabel');
-const instructions = document.getElementById('instructions');
-const loadingScreen = document.getElementById('loadingScreen');
-const errorScreen = document.getElementById('errorScreen');
-const brandEl = document.getElementById('playBrand');
+const canvas = document.getElementById("gameCanvas");
+const canvasWrapper = document.getElementById("canvasWrapper");
+const scoreLabel = document.getElementById("scoreLabel");
+const instructions = document.getElementById("instructions");
+const loadingScreen = document.getElementById("loadingScreen");
+const errorScreen = document.getElementById("errorScreen");
+const brandEl = document.getElementById("playBrand");
 
-const { game, touchStartHandler, startGameTimer } = setupGameEngine(canvas, scoreLabel);
+const { game, touchStartHandler, startGameTimer } = setupGameEngine(
+  canvas,
+  scoreLabel,
+);
 
 const playState = createPlayState({
-    canvasEl: canvas,
-    loadingEl: loadingScreen,
-    errorEl: errorScreen,
-    instructionsEl: instructions,
-    brandEl,
-    onStartGame: startGameTimer,
+  canvasEl: canvas,
+  loadingEl: loadingScreen,
+  errorEl: errorScreen,
+  instructionsEl: instructions,
+  brandEl,
+  onStartGame: startGameTimer,
 });
 
-canvas.addEventListener('mousedown', () => {
-    if (face.loaded) game.handleSmash();
+canvas.addEventListener("mousedown", () => {
+  if (face.loaded) game.handleSmash();
 });
 
-canvas.addEventListener('touchstart', (e) => {
+canvas.addEventListener(
+  "touchstart",
+  (e) => {
     touchStartHandler(e);
     if (face.loaded) game.handleSmash();
-}, { passive: false });
+  },
+  { passive: false },
+);
 
-document.getElementById('resetScoreBtn').onclick = () => {
-    game.resetScore(scoreLabel);
-    clearMarks();
+document.getElementById("resetScoreBtn").onclick = () => {
+  game.resetScore(scoreLabel);
+  clearMarks();
 };
 
-document.getElementById('resetSpeedBtn').onclick = () => game.resetSpeed();
+document.getElementById("resetSpeedBtn").onclick = () => game.resetSpeed();
 
 setupPlayShareModal({
-    modalEl: document.getElementById('shareModal'),
-    backdropEl: document.getElementById('shareBackdrop'),
-    openBtnEl: document.getElementById('shareBtn'),
-    closeBtnEl: document.getElementById('shareClose'),
-    copyBtnEl: document.getElementById('shareCopyBtn'),
-    inputEl: document.getElementById('shareInput'),
-    waEl: document.getElementById('shareWa'),
-    twEl: document.getElementById('shareTw'),
-    fbEl: document.getElementById('shareFb'),
-    getShareUrl: () => window.location.href,
+  modalEl: document.getElementById("shareModal"),
+  backdropEl: document.getElementById("shareBackdrop"),
+  openBtnEl: document.getElementById("shareBtn"),
+  closeBtnEl: document.getElementById("shareClose"),
+  copyBtnEl: document.getElementById("shareCopyBtn"),
+  inputEl: document.getElementById("shareInput"),
+  waEl: document.getElementById("shareWa"),
+  twEl: document.getElementById("shareTw"),
+  fbEl: document.getElementById("shareFb"),
+  getShareUrl: () => window.location.href,
 });
 
-const gameId = new URLSearchParams(location.search).get('g');
+const gameId = new URLSearchParams(location.search).get("g");
 
 if (!gameId) {
-    playState.showError('No game ID');
-    throw new Error('No game ID provided');
+  playState.showError("No game ID");
+  throw new Error("No game ID provided");
 }
 
 async function loadGame() {
-    playState.showLoading();
-    
-    try {
-        const gameData = await getGame(gameId);
-        
-        if (!gameData) {
-            playState.showError('Game Not Found');
-            return;
-        }
-        
-        if (gameData.name) {
-            playState.setBrand(`👊 ${gameData.name.toUpperCase()} SMASHER`);
-        }
-        
-        if (gameData.bgUrl) {
-            canvas.classList.add('arena-photo');
-            canvas.style.setProperty('--arena-photo', `url("${gameData.bgUrl}")`);
-        } else {
-            canvas.classList.add('arena-candy');
-        }
-        
-        clearMarks();
-        
-        loadFaceFromUrl(gameData.faceUrl, instructions,
-            () => resetFacePosition(canvas),
-            () => {
-                playState.startGame();
-            }
-        );
-        
-    } catch (err) {
-        console.error('Failed to load game:', err);
-        playState.showError('Failed to load game');
+  playState.showLoading();
+
+  try {
+    const gameData = await getGame(gameId);
+
+    if (!gameData) {
+      playState.showError("Game Not Found");
+      return;
     }
+
+    if (gameData.name) {
+      playState.setBrand(`👊 ${gameData.name.toUpperCase()} SMASHER`);
+    }
+
+    if (gameData.bgUrl) {
+      canvasWrapper.classList.add("arena-photo");
+      canvasWrapper.style.setProperty(
+        "--arena-photo",
+        `url("${gameData.bgUrl}")`,
+      );
+    } else {
+      canvas.classList.add("arena-candy");
+    }
+
+    clearMarks();
+
+    loadFaceFromUrl(
+      gameData.faceUrl,
+      instructions,
+      () => resetFacePosition(canvas),
+      () => {
+        playState.startGame();
+      },
+    );
+  } catch (err) {
+    console.error("Failed to load game:", err);
+    playState.showError("Failed to load game");
+  }
 }
 
 loadGame();
