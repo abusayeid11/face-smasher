@@ -1834,6 +1834,8 @@ body.creator-page .game-container {
 }
 
 .play-canvas-area .canvas-wrapper.arena-photo #gameCanvas {
+  width: 100%;
+  height: 100%;
   background-color: #111;
   background-image:
     radial-gradient(
@@ -1843,7 +1845,7 @@ body.creator-page .game-container {
     ),
     linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
     var(--arena-photo);
-  background-size: 110% 110%;
+  background-size: cover;
   background-position: center;
   animation: bgPanPosCanvas 12s ease-in-out infinite;
   border: none;
