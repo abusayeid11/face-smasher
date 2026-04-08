@@ -2,6 +2,7 @@ import { deleteGame } from "../firebase.js";
 
 const HISTORY_KEY = "faceSmasherGameHistory";
 const MAX_HISTORY_ITEMS = 20;
+const DISPLAY_LIMIT = 5;
 
 function escapeHtml(text = "") {
   return text
@@ -47,7 +48,7 @@ export function renderHistory() {
   const container = document.getElementById("historyList");
   if (!container) return;
 
-  const list = loadHistory();
+  const list = loadHistory().slice(0, DISPLAY_LIMIT);
   if (list.length === 0) {
     container.innerHTML =
       '<p class="history-empty">No games yet. Create one above!</p>';
