@@ -73,6 +73,11 @@ function initArenaButtons() {
       bgUrl = null;
       document.getElementById("bgHint").textContent = "No custom background";
       document.getElementById("uploadBgBtn").textContent = "Upload Photo";
+
+      const generateBtn = document.getElementById("generateBtn");
+      generateBtn.textContent = "🔗 Generate Smash Link";
+      generateBtn.disabled = false;
+      document.getElementById("linkBox").classList.add("hidden");
     });
   });
 
@@ -97,6 +102,12 @@ async function handleFaceLoaded(dataUrl) {
   emptyState.classList.add("hidden");
   clearMarks();
   game.resetScore(scoreEl);
+
+  const generateBtn = document.getElementById("generateBtn");
+  generateBtn.textContent = "🔗 Generate Smash Link";
+  generateBtn.disabled = false;
+  document.getElementById("linkBox").classList.add("hidden");
+
   loadFaceFromUrl(
     webpUrl,
     instructions,
@@ -111,6 +122,11 @@ async function handleFaceLoaded(dataUrl) {
 async function handleBgLoaded(dataUrl) {
   const webpUrl = await convertToWebPOnly(dataUrl);
   setCustomBackground(webpUrl);
+
+  const generateBtn = document.getElementById("generateBtn");
+  generateBtn.textContent = "🔗 Generate Smash Link";
+  generateBtn.disabled = false;
+  document.getElementById("linkBox").classList.add("hidden");
 }
 
 setupFileInput("faceFileInput", "uploadFaceBtn", handleFaceLoaded);
@@ -209,3 +225,5 @@ document.getElementById("copyBtn")?.addEventListener("click", () => {
     }, 2000);
   });
 });
+
+renderHistory();
