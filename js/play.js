@@ -17,6 +17,9 @@ const loadingScreen = document.getElementById("loadingScreen");
 const errorScreen = document.getElementById("errorScreen");
 const brandEl = document.getElementById("playBrand");
 
+canvas.width = 1200;
+canvas.height = 850;
+
 const { game, touchStartHandler, startGameTimer } = setupGameEngine(
   canvas,
   scoreLabel,
