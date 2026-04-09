@@ -102,6 +102,7 @@ async function handleFaceLoaded(dataUrl) {
   emptyState.classList.add("hidden");
   clearMarks();
   game.resetScore(scoreEl);
+  game.resetSpeed();
 
   const generateBtn = document.getElementById("generateBtn");
   generateBtn.textContent = "🔗 Generate Smash Link";

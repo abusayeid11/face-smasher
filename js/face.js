@@ -2,8 +2,8 @@
 const face = {
     x: 0,
     y: 0,
-    baseSize: 140,
-    size: 140,
+    baseSize: 200,
+    size: 200,
     ready: false,
     image: new Image(),
     marks: [],
