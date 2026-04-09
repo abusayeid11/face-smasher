@@ -17,5 +17,5 @@ build/
 
 # Misc
 *.log
-.env
 js/config.js
+config.bat
