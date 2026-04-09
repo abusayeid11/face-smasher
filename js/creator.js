@@ -170,7 +170,7 @@ document
   );
 
 // Generate link
-document.getElementById("generateBtn").addEventListener("click", async () => {
+async function processAndGenerateLink() {
   const btn = document.getElementById("generateBtn");
 
   if (!faceUrl) {
@@ -214,6 +214,32 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     btn.disabled = false;
     instructions.textContent = "Upload a face to get started";
   }
+}
+
+document.getElementById("generateBtn").addEventListener("click", async () => {
+  const warningShown = sessionStorage.getItem("shareWarningShown");
+
+  if (!warningShown) {
+    const modal = document.getElementById("shareWarningModal");
+    const cancelBtn = document.getElementById("shareWarningCancel");
+    const confirmBtn = document.getElementById("shareWarningConfirm");
+
+    modal.classList.remove("hidden");
+
+    cancelBtn.onclick = () => {
+      modal.classList.add("hidden");
+    };
+
+    confirmBtn.onclick = () => {
+      modal.classList.add("hidden");
+      sessionStorage.setItem("shareWarningShown", "true");
+      processAndGenerateLink();
+    };
+
+    return;
+  }
+
+  processAndGenerateLink();
 });
 
 document.getElementById("copyBtn")?.addEventListener("click", () => {
