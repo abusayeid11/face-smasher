@@ -1872,6 +1872,11 @@ body.creator-page .game-container {
   box-sizing: border-box;
 }
 
+.play-canvas-area .canvas-wrapper #gameCanvas {
+  width: 100%;
+  height: 100%;
+}
+
 .play-canvas-area .canvas-wrapper.arena-photo::before {
   display: none;
 }

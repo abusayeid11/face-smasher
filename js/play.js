@@ -89,14 +89,14 @@ async function loadGame() {
       playState.setBrand(`👊 ${gameData.name.toUpperCase()} SMASHER`);
     }
 
-    if (gameData.bgUrl) {
+    const arenaClass = gameData.arenaClass || "arena-candy";
+
+    if (arenaClass === "arena-photo") {
       canvasWrapper.classList.add("arena-photo");
-      canvasWrapper.style.setProperty(
-        "--arena-photo",
-        `url("${gameData.bgUrl}")`,
-      );
+      const photoUrl = gameData.bgUrl || "linear-gradient(135deg, #444, #111)";
+      canvasWrapper.style.setProperty("--arena-photo", `url("${photoUrl}")`);
     } else {
-      canvas.classList.add("arena-candy");
+      canvas.classList.add(arenaClass);
     }
 
     clearMarks();

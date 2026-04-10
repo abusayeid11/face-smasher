@@ -10,6 +10,7 @@ import {
   setupFileInput,
   processAndUploadImages,
   convertToWebPOnly,
+  uploadLocalImage,
 } from "./components/image-processor.js";
 import { saveGame } from "./firebase.js";
 import { buildShareLinks } from "./components/share-links.js";
@@ -27,21 +28,29 @@ const smashNameEl = document.getElementById("smashName");
 
 let faceUrl = null;
 let bgUrl = null;
+let currentArenaClass = "arena-candy";
+let inbuiltBgPath = null;
 
 function setArena(arenaClass, photoUrl = null) {
   canvas.className = "";
-  canvas.classList.add(arenaClass);
   canvasWrapper.className = "canvas-wrapper";
   canvasWrapper.style.removeProperty("--arena-photo");
+
   if (photoUrl) {
-    canvas.style.setProperty("--arena-photo", `url("${photoUrl}")`);
+    currentArenaClass = "arena-photo";
+    inbuiltBgPath = photoUrl;
+    canvasWrapper.className = "canvas-wrapper arena-photo";
+    canvasWrapper.style.setProperty("--arena-photo", `url("${photoUrl}")`);
   } else {
-    canvas.style.removeProperty("--arena-photo");
+    currentArenaClass = arenaClass;
+    inbuiltBgPath = null;
+    canvas.classList.add(arenaClass);
   }
 }
 
 function setCustomBackground(url) {
   bgUrl = url;
+  currentArenaClass = "arena-photo";
   canvasWrapper.className = "canvas-wrapper arena-photo";
   canvasWrapper.style.setProperty("--arena-photo", `url("${url}")`);
   document.getElementById("bgHint").textContent = "✓ Custom background set";
@@ -68,6 +77,7 @@ function initArenaButtons() {
         setArena("arena-photo", "arenas/Vikings.png");
       } else {
         setArena(arena);
+        inbuiltBgPath = null;
       }
 
       bgUrl = null;
@@ -186,10 +196,22 @@ async function processAndGenerateLink() {
     const { faceUrl: cloudFaceUrl, bgUrl: cloudBgUrl } =
       await processAndUploadImages(faceUrl, bgUrl);
 
+    let finalBgUrl = cloudBgUrl;
+
+    if (currentArenaClass === "arena-photo" && inbuiltBgPath && !bgUrl) {
+      instructions.textContent = "Uploading background...";
+      finalBgUrl = await uploadLocalImage(inbuiltBgPath);
+    }
+
     btn.textContent = "Saving...";
 
     const name = smashNameEl?.value.trim() || "";
-    const id = await saveGame(cloudFaceUrl, cloudBgUrl || "", name);
+    const id = await saveGame(
+      cloudFaceUrl,
+      finalBgUrl || "",
+      name,
+      currentArenaClass,
+    );
     const url = `${window.location.href.replace(/\/[^/]*$/, "/")}play.html?g=${id}`;
 
     document.getElementById("gameLink").value = url;
