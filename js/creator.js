@@ -214,6 +214,13 @@ async function processAndGenerateLink() {
 
     if (useDefaultFace) {
       finalFaceUrl = DEFAULT_FACE_URL;
+
+      if (currentArenaClass === "arena-photo" && inbuiltBgPath) {
+        instructions.textContent = "Uploading background…";
+        finalBgUrl = await uploadLocalImage(inbuiltBgPath);
+      } else {
+        finalBgUrl = "";
+      }
     } else {
       const { faceUrl: cloudFaceUrl, bgUrl: cloudBgUrl } =
         await processAndUploadImages(faceUrl, bgUrl);
