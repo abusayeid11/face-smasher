@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# Create the folder if it doesn't exist
 mkdir -p js
 
-echo "const FIREBASE_CONFIG = {
+# The content of the file (Note the word EXPORT before every variable)
+CONTENT="export const FIREBASE_CONFIG = {
   apiKey: '$API_KEY',
   authDomain: '$AUTH_DOMAIN',
   databaseURL: '$DATABASE_URL',
@@ -12,7 +14,13 @@ echo "const FIREBASE_CONFIG = {
   appId: '$APP_ID'
 };
 
-const CLOUDINARY_CLOUD_NAME = '$CLOUDINARY_CLOUD_NAME';
-const CLOUDINARY_UPLOAD_PRESET = '$CLOUDINARY_UPLOAD_PRESET';" > js/config.js
+export const CLOUDINARY_CLOUD_NAME = '$CLOUDINARY_CLOUD_NAME';
+export const CLOUDINARY_UPLOAD_PRESET = '$CLOUDINARY_UPLOAD_PRESET';"
 
-echo "Config file generated!"
+# Save it to the root folder (fixes the ../config.js error)
+echo "$CONTENT" > config.js
+
+# Save a copy to the js folder (just in case)
+echo "$CONTENT" > js/config.js
+
+echo "Config files generated with exports!"
