@@ -12,9 +12,7 @@ echo "const FIREBASE_CONFIG = {
   appId: '$APP_ID'
 };
 
-const CLOUDINARY_CONFIG = {
-  cloudName: '$CLOUDINARY_CLOUD_NAME',
-  uploadPreset: '$CLOUDINARY_UPLOAD_PRESET'
-};" > js/config.js
+const CLOUDINARY_CLOUD_NAME = '$CLOUDINARY_CLOUD_NAME';
+const CLOUDINARY_UPLOAD_PRESET = '$CLOUDINARY_UPLOAD_PRESET';" > js/config.js
 
 echo "Config file generated!"
