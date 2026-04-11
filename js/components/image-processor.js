@@ -105,4 +105,32 @@ async function convertToWebPOnly(dataUrl) {
   return convertToWebP(dataUrl, 0.8);
 }
 
-export { setupFileInput, processAndUploadImages, convertToWebPOnly };
+async function uploadLocalImage(imagePath) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = async () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const dataUrl = canvas.toDataURL("image/png");
+      try {
+        const url = await uploadToCloudinary(dataUrl);
+        resolve(url);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    img.onerror = () => reject(new Error("Failed to load local image"));
+    img.src = imagePath;
+  });
+}
+
+export {
+  setupFileInput,
+  processAndUploadImages,
+  convertToWebPOnly,
+  uploadLocalImage,
+};

@@ -1,5 +1,6 @@
 import {
   face,
+  DEFAULT_FACE_URL,
   loadFaceFromUrl,
   loadDefaultFace,
   resetFacePosition,
@@ -10,6 +11,7 @@ import {
   setupFileInput,
   processAndUploadImages,
   convertToWebPOnly,
+  uploadLocalImage,
 } from "./components/image-processor.js";
 import { saveGame } from "./firebase.js";
 import { buildShareLinks } from "./components/share-links.js";
@@ -27,21 +29,44 @@ const smashNameEl = document.getElementById("smashName");
 
 let faceUrl = null;
 let bgUrl = null;
+let currentArenaClass = "arena-candy";
+let inbuiltBgPath = null;
 
 function setArena(arenaClass, photoUrl = null) {
   canvas.className = "";
-  canvas.classList.add(arenaClass);
   canvasWrapper.className = "canvas-wrapper";
   canvasWrapper.style.removeProperty("--arena-photo");
+
   if (photoUrl) {
-    canvas.style.setProperty("--arena-photo", `url("${photoUrl}")`);
+    currentArenaClass = "arena-photo";
+    inbuiltBgPath = photoUrl;
+    canvasWrapper.className = "canvas-wrapper arena-photo";
+    canvasWrapper.style.setProperty("--arena-photo", `url("${photoUrl}")`);
   } else {
-    canvas.style.removeProperty("--arena-photo");
+    currentArenaClass = arenaClass;
+    inbuiltBgPath = null;
+    canvas.classList.add(arenaClass);
   }
 }
 
+document.getElementById("aboutBtn")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.remove("hidden");
+});
+document.getElementById("aboutClose")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.add("hidden");
+});
+document.getElementById("aboutBackdrop")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.add("hidden");
+});
+document.getElementById("aboutModal")?.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    document.getElementById("aboutModal").classList.add("hidden");
+  }
+});
+
 function setCustomBackground(url) {
   bgUrl = url;
+  currentArenaClass = "arena-photo";
   canvasWrapper.className = "canvas-wrapper arena-photo";
   canvasWrapper.style.setProperty("--arena-photo", `url("${url}")`);
   document.getElementById("bgHint").textContent = "✓ Custom background set";
@@ -63,11 +88,12 @@ function initArenaButtons() {
       const arena = btn.dataset.arena;
 
       if (arena === "arena-sust") {
-        setArena("arena-photo", "arenas/SUST%20Gate.png");
-      } else if (arena === "arena-vikings") {
-        setArena("arena-photo", "arenas/Vikings.png");
+        setArena("arena-photo", "arenas/SUST%20Gate.webp");
+      } else if (arena === "arena-tong-dokan") {
+        setArena("arena-photo", "arenas/Tong%20Dokan.webp");
       } else {
         setArena(arena);
+        inbuiltBgPath = null;
       }
 
       bgUrl = null;
@@ -172,24 +198,44 @@ document
 // Generate link
 async function processAndGenerateLink() {
   const btn = document.getElementById("generateBtn");
-
-  if (!faceUrl) {
-    alert("Please upload a face photo first.");
-    return;
-  }
+  const useDefaultFace = !faceUrl;
 
   btn.disabled = true;
-  btn.textContent = "Processing…";
-  instructions.textContent = "Detecting face and uploading...";
+  btn.textContent = useDefaultFace
+    ? "Processing…"
+    : "Detecting face and uploading…";
+  instructions.textContent = useDefaultFace
+    ? "Preparing game data…"
+    : "Detecting face and uploading…";
 
   try {
-    const { faceUrl: cloudFaceUrl, bgUrl: cloudBgUrl } =
-      await processAndUploadImages(faceUrl, bgUrl);
+    let finalFaceUrl;
+    let finalBgUrl = "";
 
-    btn.textContent = "Saving...";
+    if (useDefaultFace) {
+      finalFaceUrl = DEFAULT_FACE_URL;
+    } else {
+      const { faceUrl: cloudFaceUrl, bgUrl: cloudBgUrl } =
+        await processAndUploadImages(faceUrl, bgUrl);
+      finalFaceUrl = cloudFaceUrl;
+
+      if (currentArenaClass === "arena-photo" && inbuiltBgPath && !bgUrl) {
+        instructions.textContent = "Uploading background…";
+        finalBgUrl = await uploadLocalImage(inbuiltBgPath);
+      } else {
+        finalBgUrl = cloudBgUrl || "";
+      }
+    }
+
+    btn.textContent = "Saving…";
 
     const name = smashNameEl?.value.trim() || "";
-    const id = await saveGame(cloudFaceUrl, cloudBgUrl || "", name);
+    const id = await saveGame(
+      finalFaceUrl,
+      finalBgUrl,
+      name,
+      currentArenaClass,
+    );
     const url = `${window.location.href.replace(/\/[^/]*$/, "/")}play.html?g=${id}`;
 
     document.getElementById("gameLink").value = url;
@@ -203,10 +249,14 @@ async function processAndGenerateLink() {
     });
 
     document.getElementById("linkBox").classList.remove("hidden");
-    btn.textContent = "🔗 Regenerate Link";
+    btn.textContent = useDefaultFace
+      ? "🔗 Default Face Ready"
+      : "🔗 Regenerate Link";
 
-    addToHistory(id, url, faceUrl, bgUrl, name);
+    const historyFaceUrl = useDefaultFace ? DEFAULT_FACE_URL : faceUrl;
+    addToHistory(id, url, historyFaceUrl, bgUrl, name);
     renderHistory();
+
     instructions.textContent = "Click the canvas to try smashing!";
   } catch (err) {
     console.error(err);
