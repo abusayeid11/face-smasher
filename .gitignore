@@ -19,3 +19,6 @@ build/
 *.log
 .env
 js/config.js
+
+# Firebase (review before deploying)
+firebase-rules.json
