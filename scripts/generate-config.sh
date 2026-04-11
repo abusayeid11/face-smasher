@@ -3,15 +3,15 @@
 # Create the folder if it doesn't exist
 mkdir -p js
 
-# The content of the file (Note the word EXPORT before every variable)
+# The content of the file with exports
 CONTENT="export const FIREBASE_CONFIG = {
-  apiKey: '$API_KEY',
-  authDomain: '$AUTH_DOMAIN',
-  databaseURL: '$DATABASE_URL',
-  projectId: '$PROJECT_ID',
-  storageBucket: '$STORAGE_BUCKET',
-  messagingSenderId: '$MESSAGING_SENDER_ID',
-  appId: '$APP_ID'
+  apiKey: '$apiKey',
+  authDomain: '$authDomain',
+  databaseURL: '$databaseURL',
+  projectId: '$projectId',
+  storageBucket: '$storageBucket',
+  messagingSenderId: '$messagingSenderId',
+  appId: '$appId'
 };
 
 export const CLOUDINARY_CLOUD_NAME = '$CLOUDINARY_CLOUD_NAME';
