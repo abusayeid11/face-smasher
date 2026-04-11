@@ -15,6 +15,7 @@
           <button id="creatorReset">Reset Score</button>
           <button id="creatorResetSpeed">Normal Speed</button>
           <button id="generateBtn">🔗 Generate Smash Link</button>
+          <button id="aboutBtn" class="about-btn">About</button>
         </div>
         <div id="linkBox" class="creator-link-box hidden">
           <div class="creator-link-row">
@@ -86,7 +87,7 @@
               <input type="file" id="faceFileInput" accept="image/*" hidden />
               <button class="upload-btn" id="uploadFaceBtn">Upload Face</button>
               <p class="hint-text" id="faceHint">
-                Crop to face before uploading for best results
+                Upload a face or generate link with default emoji
               </p>
             </div>
 
@@ -100,8 +101,8 @@
                 <button class="arena-btn" data-arena="arena-sust">
                   SUST Gate
                 </button>
-                <button class="arena-btn" data-arena="arena-vikings">
-                  Vikings
+                <button class="arena-btn" data-arena="arena-tong-dokan">
+                  Tong
                 </button>
               </div>
               <input type="file" id="bgFileInput" accept="image/*" hidden />
@@ -188,6 +189,25 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="share-modal hidden">
+      <div class="share-modal-backdrop" id="aboutBackdrop"></div>
+      <div class="setup-card share-modal-card">
+        <h2 class="share-modal-title">About</h2>
+        <p class="setup-help share-modal-subtitle">
+          This game is created for learning and fun purposes only. We are not
+          responsible for any misuse of the content.
+        </p>
+        <p class="setup-help share-modal-subtitle">
+          For queries/suggestions, contact:
+          <a href="mailto:abusayeidsawon@gmail.com">abusayeidsawon@gmail.com</a>
+        </p>
+        <button id="aboutClose" class="upload-btn share-close-btn">
+          Close
+        </button>
       </div>
     </div>
 

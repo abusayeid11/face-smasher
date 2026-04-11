@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": true,
+    "games": {
+      "$gameId": {
+        ".write": "!data.exists() && newData.hasChildren(['faceUrl', 'arenaClass'])",
+        "faceUrl": {
+          ".validate": "newData.isString()"
+        },
+        "arenaClass": {
+          ".validate": "newData.isString() && newData.val().matches(/^arena-/)"
+        },
+        "bgUrl": {
+          ".validate": "newData.isString()"
+        },
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    }
+  }
+}

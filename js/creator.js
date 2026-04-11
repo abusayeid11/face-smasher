@@ -1,5 +1,6 @@
 import {
   face,
+  DEFAULT_FACE_URL,
   loadFaceFromUrl,
   loadDefaultFace,
   resetFacePosition,
@@ -48,6 +49,21 @@ function setArena(arenaClass, photoUrl = null) {
   }
 }
 
+document.getElementById("aboutBtn")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.remove("hidden");
+});
+document.getElementById("aboutClose")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.add("hidden");
+});
+document.getElementById("aboutBackdrop")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.add("hidden");
+});
+document.getElementById("aboutModal")?.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    document.getElementById("aboutModal").classList.add("hidden");
+  }
+});
+
 function setCustomBackground(url) {
   bgUrl = url;
   currentArenaClass = "arena-photo";
@@ -72,9 +88,9 @@ function initArenaButtons() {
       const arena = btn.dataset.arena;
 
       if (arena === "arena-sust") {
-        setArena("arena-photo", "arenas/SUST%20Gate.png");
-      } else if (arena === "arena-vikings") {
-        setArena("arena-photo", "arenas/Vikings.png");
+        setArena("arena-photo", "arenas/SUST%20Gate.webp");
+      } else if (arena === "arena-tong-dokan") {
+        setArena("arena-photo", "arenas/Tong%20Dokan.webp");
       } else {
         setArena(arena);
         inbuiltBgPath = null;
@@ -182,33 +198,41 @@ document
 // Generate link
 async function processAndGenerateLink() {
   const btn = document.getElementById("generateBtn");
-
-  if (!faceUrl) {
-    alert("Please upload a face photo first.");
-    return;
-  }
+  const useDefaultFace = !faceUrl;
 
   btn.disabled = true;
-  btn.textContent = "Processing…";
-  instructions.textContent = "Detecting face and uploading...";
+  btn.textContent = useDefaultFace
+    ? "Processing…"
+    : "Detecting face and uploading…";
+  instructions.textContent = useDefaultFace
+    ? "Preparing game data…"
+    : "Detecting face and uploading…";
 
   try {
-    const { faceUrl: cloudFaceUrl, bgUrl: cloudBgUrl } =
-      await processAndUploadImages(faceUrl, bgUrl);
+    let finalFaceUrl;
+    let finalBgUrl = "";
 
-    let finalBgUrl = cloudBgUrl;
+    if (useDefaultFace) {
+      finalFaceUrl = DEFAULT_FACE_URL;
+    } else {
+      const { faceUrl: cloudFaceUrl, bgUrl: cloudBgUrl } =
+        await processAndUploadImages(faceUrl, bgUrl);
+      finalFaceUrl = cloudFaceUrl;
 
-    if (currentArenaClass === "arena-photo" && inbuiltBgPath && !bgUrl) {
-      instructions.textContent = "Uploading background...";
-      finalBgUrl = await uploadLocalImage(inbuiltBgPath);
+      if (currentArenaClass === "arena-photo" && inbuiltBgPath && !bgUrl) {
+        instructions.textContent = "Uploading background…";
+        finalBgUrl = await uploadLocalImage(inbuiltBgPath);
+      } else {
+        finalBgUrl = cloudBgUrl || "";
+      }
     }
 
-    btn.textContent = "Saving...";
+    btn.textContent = "Saving…";
 
     const name = smashNameEl?.value.trim() || "";
     const id = await saveGame(
-      cloudFaceUrl,
-      finalBgUrl || "",
+      finalFaceUrl,
+      finalBgUrl,
       name,
       currentArenaClass,
     );
@@ -225,10 +249,14 @@ async function processAndGenerateLink() {
     });
 
     document.getElementById("linkBox").classList.remove("hidden");
-    btn.textContent = "🔗 Regenerate Link";
+    btn.textContent = useDefaultFace
+      ? "🔗 Default Face Ready"
+      : "🔗 Regenerate Link";
 
-    addToHistory(id, url, faceUrl, bgUrl, name);
+    const historyFaceUrl = useDefaultFace ? DEFAULT_FACE_URL : faceUrl;
+    addToHistory(id, url, historyFaceUrl, bgUrl, name);
     renderHistory();
+
     instructions.textContent = "Click the canvas to try smashing!";
   } catch (err) {
     console.error(err);

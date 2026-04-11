@@ -116,3 +116,19 @@ async function loadGame() {
 }
 
 loadGame();
+
+// About modal
+document.getElementById("aboutBtn")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.remove("hidden");
+});
+document.getElementById("aboutClose")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.add("hidden");
+});
+document.getElementById("aboutBackdrop")?.addEventListener("click", () => {
+  document.getElementById("aboutModal").classList.add("hidden");
+});
+document.getElementById("aboutModal")?.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    document.getElementById("aboutModal").classList.add("hidden");
+  }
+});
